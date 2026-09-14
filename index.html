@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CAÇA AS EMOÇÕES - Plataforma</title>
     <style>
         * {
@@ -157,10 +157,10 @@
             box-shadow: 0 6px 20px rgba(0, 210, 255, 0.7);
         }
 
-        /* Créditos do Criador na Tela Inicial */
+        /* Créditos do Criador no Canto Superior Esquerdo */
         .creator-credits {
             position: absolute;
-            bottom: 18px;
+            top: 18px;
             left: 20px;
             z-index: 5;
             display: flex;
@@ -170,29 +170,45 @@
             font-size: 13px;
             font-weight: 700;
             color: #1e272e;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 14px;
             border-radius: 12px;
             border: 2px solid rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(4px);
             pointer-events: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
         }
 
         .creator-credits span {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .creator-credits a {
-            color: #8e24aa;
+            color: #d81b60;
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: opacity 0.2s ease;
         }
 
         .creator-credits a:hover {
-            color: #d81b60;
+            opacity: 0.8;
             text-decoration: underline;
+        }
+
+        .ig-icon-badge {
+            width: 17px;
+            height: 17px;
+            border-radius: 5px;
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ig-icon-badge svg {
+            stroke: #ffffff;
         }
 
         /* HUD do Jogo */
@@ -329,7 +345,7 @@
             margin-bottom: 6px;
         }
 
-        /* ================= TELA DO QUESTIONÁRIO (ESTILO DA IMAGEM) ================= */
+        /* ================= TELA DO QUESTIONÁRIO ================= */
         #screen-quiz {
             background: #eef2f7;
             padding: 15px;
@@ -574,7 +590,7 @@
             .title-psico { font-size: 50px; gap: 8px; }
             .title-mind { font-size: 38px; gap: 14px; margin-bottom: 18px; }
             .btn-doodle-play { font-size: 40px; padding: 10px 42px; border-width: 4px; }
-            .creator-credits { font-size: 11px; bottom: 10px; left: 12px; }
+            .creator-credits { font-size: 11px; top: 12px; left: 12px; }
             .psycho-card {
                 flex-direction: column;
                 text-align: center;
@@ -595,6 +611,125 @@
                 width: 55px;
                 height: 55px;
                 font-size: 18px;
+            }
+        }
+
+        /* AJUSTES RESPONSIVOS ESPECÍFICOS PARA CELULAR NA HORIZONTAL */
+        @media (max-height: 500px) {
+            .start-menu-content {
+                gap: 6px;
+                transform: scale(0.75);
+                transform-origin: center;
+            }
+            .title-psico { font-size: 44px; gap: 8px; }
+            .title-mind { font-size: 32px; gap: 10px; margin-bottom: 8px; }
+            .btn-doodle-play { font-size: 32px; padding: 6px 36px; border-width: 3px; }
+            .creator-credits {
+                font-size: 9px;
+                padding: 3px 8px;
+                top: 8px;
+                left: 10px;
+            }
+            #touch-controls-left, #touch-controls-right {
+                bottom: 10px;
+                gap: 10px;
+            }
+            .touch-btn {
+                width: 46px;
+                height: 46px;
+                font-size: 16px;
+            }
+            #hud {
+                top: 8px;
+                left: 12px;
+                right: 12px;
+            }
+            .hud-box {
+                padding: 4px 12px;
+                font-size: 12px;
+            }
+            #btn-back-menu {
+                top: 8px;
+                padding: 5px 14px;
+                font-size: 12px;
+            }
+            .psycho-card {
+                flex-direction: row;
+                padding: 12px 18px;
+                max-height: 96vh;
+                overflow-y: auto;
+                gap: 15px;
+            }
+            .psycho-card img {
+                width: 110px;
+            }
+            .psycho-content h2 {
+                font-size: 18px;
+                margin-bottom: 6px;
+            }
+            .psycho-content p {
+                font-size: 12px;
+                line-height: 1.3;
+                margin-bottom: 6px;
+            }
+            .psycho-content ul {
+                font-size: 11px;
+                line-height: 1.25;
+                margin-bottom: 10px;
+            }
+            .psycho-content .btn {
+                padding: 8px 22px;
+                font-size: 13px;
+            }
+            .phone-quiz-wrapper {
+                max-height: 94vh;
+                max-width: 520px;
+            }
+            .quiz-top-bar {
+                padding: 6px 14px;
+            }
+            .quiz-card-question {
+                min-height: 60px;
+                padding: 10px 12px;
+                margin-bottom: 8px;
+            }
+            .quiz-card-question h3 {
+                font-size: 13px;
+            }
+            .quiz-option-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            .quiz-footer {
+                padding: 6px 14px 10px;
+            }
+            .quiz-btn-next {
+                padding: 8px;
+                font-size: 14px;
+            }
+            .result-card {
+                padding: 14px 18px;
+                max-height: 95vh;
+                overflow-y: auto;
+                gap: 8px;
+            }
+            .result-card canvas {
+                width: 110px;
+                height: 110px;
+            }
+            .result-card h2 {
+                font-size: 20px;
+            }
+            .result-card p {
+                font-size: 12px;
+            }
+            .result-score-badge {
+                font-size: 14px;
+                padding: 4px 14px;
+            }
+            .result-card .btn {
+                padding: 8px 20px;
+                font-size: 13px;
             }
         }
     </style>
@@ -626,6 +761,23 @@
 
         <!-- Tela Inicial Reestilizada -->
         <div id="screen-start" class="overlay-screen">
+            <!-- Créditos no canto superior esquerdo -->
+            <div class="creator-credits">
+                <span>Criador: Bernardo Rodrigues</span>
+                <span>
+                    <a href="https://instagram.com/usuario_nao_esta_entre_nos" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 5px;">
+                        <span class="ig-icon-badge">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </span>
+                        @usuario_nao_esta_entre_nos
+                    </a>
+                </span>
+            </div>
+
             <svg class="doodle-bg" viewBox="0 0 1000 560" preserveAspectRatio="none">
                 <!-- Esquerda -->
                 <path d="M 60 115 C 30 110, 30 75, 60 75 C 90 75, 95 105, 75 125 C 55 145, 40 145, 45 150" fill="none" stroke="#d61f1f" stroke-width="5.5" stroke-linecap="round"/>
@@ -673,12 +825,6 @@
                     <span class="c-n">S</span>
                 </div>
                 <button class="btn-doodle-play" onclick="showLevelSelect()">PLAY</button>
-            </div>
-
-            <!-- Créditos no canto esquerdo inferior -->
-            <div class="creator-credits">
-                <span>Criador: Bernardo Rodrigues</span>
-                <span>Instagram: <a href="https://instagram.com/usuario_nao_esta_entre_nos" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>@usuario_nao_esta_entre_nos</a></span>
             </div>
         </div>
 
@@ -871,9 +1017,9 @@
         const touchRight = document.getElementById('touch-controls-right');
 
         // Estado do Jogo
-        let gameState = 'MENU'; // MENU, LEVEL_SELECT, PLAYING, REFLECTION, QUIZ, RESULT
+        let gameState = 'MENU';
         let currentLevel = 1;
-        let isSunny = false; // Transição do Cenário (Chuva -> Sol)
+        let isSunny = false;
 
         // Configuração dos Nós de Fases no Mapa
         let levelNodes = [];
@@ -912,64 +1058,59 @@
             height: 60,
             vx: 0,
             vy: 0,
-            speed: 2.2,
+            speed: 1.4,
             jumpPower: -11.5,
             grounded: false,
             color: '#4d88ff',
             defeated: false
         };
 
-        // ================= DADOS DO QUESTIONÁRIO (5 PERGUNTAS: 1 POR EMOÇÃO) =================
+        // Questionário
         const quizQuestions = [
             {
-                // Fase 1: Tristeza
                 q: "Seu brinquedo quebrou e você ficou triste. O que fazer?",
                 opts: [
                     "Ficar de bico o dia todo.",
                     "Esconder o brinquedo.",
                     "Pedir um abraço bem quentinho."
                 ],
-                correct: 2 // C
+                correct: 2
             },
             {
-                // Fase 2: Raiva
                 q: "Pegaram seu giz de cera e você ficou bravo. O que fazer?",
                 opts: [
                     "Empurrar o colega.",
                     "Respirar fundo e pedir de volta.",
                     "Gritar bem alto."
                 ],
-                correct: 1 // B
+                correct: 1
             },
             {
-                // Fase 3: Medo
                 q: "O quarto ficou no escuro e deu medo. O que fazer?",
                 opts: [
                     "Lembrar que está tudo bem e ligar um abajur.",
                     "Ficar acordado com medo.",
                     "Sair correndo pra rua."
                 ],
-                correct: 0 // A
+                correct: 0
             },
             {
-                // Fase 4: Ansiedade
                 q: "Amanhã tem um dia importante e você está nervoso. O que fazer?",
                 opts: [
                     "Ficar acordado a noite toda.",
                     "Dormir cedo e descansar.",
                     "Fingir dodói para não ir."
                 ],
-                correct: 1 // B
+                correct: 1
             },
             {
-                // Fase 5: Timidez
                 q: "Você quer brincar com novos amiguinhos, mas tem vergonha. O que fazer?",
                 opts: [
                     "Ficar escondido no cantinho.",
                     "Ir embora na mesma hora.",
                     "Chegar perto, sorrir e dizer: 'Posso brincar?'"
                 ],
-                correct: 2 // C
+                correct: 2
             }
         ];
 
@@ -1019,7 +1160,6 @@
         function handleQuizNext() {
             if (selectedOptionIndex === null) return;
 
-            // Checagem de Acerto
             if (selectedOptionIndex === quizQuestions[currentQuestionIndex].correct) {
                 quizScore += 1;
             }
@@ -1038,12 +1178,10 @@
             gameState = 'RESULT';
 
             if (quizScore >= 3) {
-                // Nota 3 até 5: Tela de Troféu
                 document.getElementById('victory-score-text').textContent = `Nota: ${quizScore} / 5`;
                 screenVictory.classList.remove('hidden');
                 drawSmilingTrophy();
             } else {
-                // Nota < 3: Tela do Personagem Cérebro Amigo
                 document.getElementById('retry-score-text').textContent = `Nota: ${quizScore} / 5`;
                 screenRetry.classList.remove('hidden');
                 drawCheeringBrain();
@@ -1056,7 +1194,6 @@
             showLevelSelect();
         }
 
-        // ================= DESENHO DO TROFÉU GRANDE SORRIDENTE =================
         function drawSmilingTrophy() {
             const c = document.getElementById('canvasTrophy');
             const tCtx = c.getContext('2d');
@@ -1065,7 +1202,6 @@
             const cx = c.width / 2;
             const cy = c.height / 2 + 10;
 
-            // Brilho / Raios atrás
             tCtx.save();
             tCtx.fillStyle = 'rgba(255, 215, 0, 0.2)';
             for (let i = 0; i < 12; i++) {
@@ -1077,17 +1213,14 @@
             }
             tCtx.restore();
 
-            // Base de Madeira / Mármore
             tCtx.fillStyle = '#4a2c11';
             tCtx.fillRect(cx - 50, cy + 65, 100, 24);
             tCtx.fillStyle = '#d4af37';
             tCtx.fillRect(cx - 35, cy + 70, 70, 14);
 
-            // Haste do Troféu
             tCtx.fillStyle = '#e6b800';
             tCtx.fillRect(cx - 14, cy + 35, 28, 30);
 
-            // Alças do Troféu
             tCtx.strokeStyle = '#f39c12';
             tCtx.lineWidth = 12;
             tCtx.beginPath();
@@ -1098,7 +1231,6 @@
             tCtx.arc(cx + 54, cy - 20, 28, 1.4 * Math.PI, 0.6 * Math.PI);
             tCtx.stroke();
 
-            // Taça Principal Dourada
             tCtx.fillStyle = '#ffcf10';
             tCtx.strokeStyle = '#e67e22';
             tCtx.lineWidth = 4;
@@ -1112,20 +1244,16 @@
             tCtx.fill();
             tCtx.stroke();
 
-            // Brilho dourado reflexivo
             tCtx.fillStyle = '#ffeaa7';
             tCtx.beginPath();
             tCtx.ellipse(cx - 30, cy - 30, 8, 26, -0.2, 0, Math.PI * 2);
             tCtx.fill();
 
-            // Estrelinha na testa do troféu
             tCtx.fillStyle = '#ffffff';
             tCtx.beginPath();
             tCtx.arc(cx, cy - 48, 5, 0, Math.PI * 2);
             tCtx.fill();
 
-            // Olhos Grandes e Felizes com Brilho
-            // Olho Esquerdo
             tCtx.fillStyle = '#1e272e';
             tCtx.beginPath();
             tCtx.ellipse(cx - 20, cy - 14, 9, 13, 0, 0, Math.PI * 2);
@@ -1136,7 +1264,6 @@
             tCtx.arc(cx - 17, cy - 10, 1.8, 0, Math.PI * 2);
             tCtx.fill();
 
-            // Olho Direito
             tCtx.fillStyle = '#1e272e';
             tCtx.beginPath();
             tCtx.ellipse(cx + 20, cy - 14, 9, 13, 0, 0, Math.PI * 2);
@@ -1147,28 +1274,24 @@
             tCtx.arc(cx + 23, cy - 10, 1.8, 0, Math.PI * 2);
             tCtx.fill();
 
-            // Bochechas Rosadas
             tCtx.fillStyle = 'rgba(255, 99, 72, 0.4)';
             tCtx.beginPath();
             tCtx.ellipse(cx - 32, cy + 2, 9, 5, 0, 0, Math.PI * 2);
             tCtx.ellipse(cx + 32, cy + 2, 9, 5, 0, 0, Math.PI * 2);
             tCtx.fill();
 
-            // Sorriso Radiante Aberto
             tCtx.fillStyle = '#c0392b';
             tCtx.beginPath();
             tCtx.arc(cx, cy + 2, 16, 0.1 * Math.PI, 0.9 * Math.PI);
             tCtx.closePath();
             tCtx.fill();
 
-            // Língua feliz
             tCtx.fillStyle = '#ff7675';
             tCtx.beginPath();
             tCtx.arc(cx, cy + 13, 9, 0, Math.PI, true);
             tCtx.fill();
         }
 
-        // ================= DESENHO DO PERSONAGEM CÉREBRO AMIGO =================
         function drawCheeringBrain() {
             const c = document.getElementById('canvasBrainHero');
             const bCtx = c.getContext('2d');
@@ -1177,7 +1300,6 @@
             const cx = c.width / 2;
             const cy = c.height / 2 - 10;
 
-            // Perninhas Pretas
             bCtx.strokeStyle = '#2d3436';
             bCtx.lineWidth = 5;
             bCtx.lineCap = 'round';
@@ -1189,18 +1311,15 @@
             bCtx.lineTo(cx + 28, cy + 85);
             bCtx.stroke();
 
-            // Sapatos Vermelhos
             bCtx.fillStyle = '#e52521';
             bCtx.beginPath();
             bCtx.ellipse(cx - 32, cy + 88, 14, 8, -0.1, 0, Math.PI * 2);
             bCtx.ellipse(cx + 32, cy + 88, 14, 8, 0.1, 0, Math.PI * 2);
             bCtx.fill();
 
-            // Bracinhos Abertos Acolhendo
             bCtx.strokeStyle = '#2d3436';
             bCtx.lineWidth = 4.5;
 
-            // Braço Esquerdo levantado dando joinha/acenando
             bCtx.beginPath();
             bCtx.moveTo(cx - 50, cy + 15);
             bCtx.quadraticCurveTo(cx - 75, cy - 5, cx - 80, cy - 25);
@@ -1210,7 +1329,6 @@
             bCtx.arc(cx - 80, cy - 25, 7, 0, Math.PI * 2);
             bCtx.fill();
 
-            // Braço Direito aberto para abraço
             bCtx.beginPath();
             bCtx.moveTo(cx + 50, cy + 15);
             bCtx.quadraticCurveTo(cx + 75, cy - 5, cx + 80, cy - 25);
@@ -1220,7 +1338,6 @@
             bCtx.arc(cx + 80, cy - 25, 7, 0, Math.PI * 2);
             bCtx.fill();
 
-            // Estrutura Principal do Cérebro Rosa
             bCtx.fillStyle = '#ffb6c1';
             bCtx.strokeStyle = '#ff80ab';
             bCtx.lineWidth = 4;
@@ -1237,7 +1354,6 @@
             bCtx.fill();
             bCtx.stroke();
 
-            // Ranhuras anatômicas fofinhas
             bCtx.strokeStyle = '#f06292';
             bCtx.lineWidth = 3.5;
             bCtx.lineCap = 'round';
@@ -1249,8 +1365,6 @@
             bCtx.quadraticCurveTo(cx + 18, cy - 15, cx + 25, cy);
             bCtx.stroke();
 
-            // Olhos Grandes Expressivos com Brilho de Orgulho
-            // Olho Esquerdo
             bCtx.fillStyle = '#2d3436';
             bCtx.beginPath();
             bCtx.ellipse(cx - 16, cy + 2, 8, 11, 0, 0, Math.PI * 2);
@@ -1261,7 +1375,6 @@
             bCtx.arc(cx - 14, cy + 5, 1.5, 0, Math.PI * 2);
             bCtx.fill();
 
-            // Olho Direito
             bCtx.fillStyle = '#2d3436';
             bCtx.beginPath();
             bCtx.ellipse(cx + 16, cy + 2, 8, 11, 0, 0, Math.PI * 2);
@@ -1272,14 +1385,12 @@
             bCtx.arc(cx + 18, cy + 5, 1.5, 0, Math.PI * 2);
             bCtx.fill();
 
-            // Bochechas Fofas
             bCtx.fillStyle = 'rgba(255, 64, 129, 0.45)';
             bCtx.beginPath();
             bCtx.ellipse(cx - 28, cy + 14, 8, 5, 0, 0, Math.PI * 2);
             bCtx.ellipse(cx + 28, cy + 14, 8, 5, 0, 0, Math.PI * 2);
             bCtx.fill();
 
-            // Sorriso Acolhedor e Carinhoso
             bCtx.strokeStyle = '#2d3436';
             bCtx.lineWidth = 3.5;
             bCtx.beginPath();
@@ -1287,23 +1398,20 @@
             bCtx.stroke();
         }
 
-        // Atualiza elementos responsivos com base no tamanho da tela
         function updateLayout() {
             const w = canvas.width;
             const h = canvas.height;
 
-            // Nós do Mapa Proporcionais
             levelNodes = [
-                { id: 1, name: 'Tristeza', x: w * 0.35, y: h * 0.78, r: 24, color: '#4d88ff', speed: 2.0 },
-                { id: 2, name: 'Raiva', x: w * 0.62, y: h * 0.68, r: 24, color: '#ff4d4d', speed: 2.8 },
-                { id: 3, name: 'Medo', x: w * 0.45, y: h * 0.45, r: 24, color: '#a64dff', speed: 2.3 },
-                { id: 4, name: 'Ansiedade', x: w * 0.62, y: h * 0.28, r: 24, color: '#ff8c00', speed: 2.5 },
-                { id: 5, name: 'Timidez', x: w * 0.62, y: h * 0.10, r: 24, color: '#2ecc71', speed: 1.8 }
+                { id: 1, name: 'Tristeza', x: w * 0.35, y: h * 0.78, r: 24, color: '#4d88ff', speed: 1.3 },
+                { id: 2, name: 'Raiva', x: w * 0.62, y: h * 0.68, r: 24, color: '#ff4d4d', speed: 1.8 },
+                { id: 3, name: 'Medo', x: w * 0.45, y: h * 0.45, r: 24, color: '#a64dff', speed: 1.5 },
+                { id: 4, name: 'Ansiedade', x: w * 0.62, y: h * 0.28, r: 24, color: '#ff8c00', speed: 1.6 },
+                { id: 5, name: 'Timidez', x: w * 0.62, y: h * 0.10, r: 24, color: '#2ecc71', speed: 1.2 }
             ];
 
-            // Plataformas Proporcionais
             platforms = [
-                { x: 0, y: h - 60, width: w, height: 60 },                         // Chão
+                { x: 0, y: h - 60, width: w, height: 60 },
                 { x: w * 0.12, y: h * 0.68, width: w * 0.22, height: 20 },
                 { x: w * 0.40, y: h * 0.52, width: w * 0.22, height: 20 },
                 { x: w * 0.70, y: h * 0.34, width: w * 0.20, height: 20 }
@@ -1313,7 +1421,6 @@
             clipboard.y = h * 0.24;
         }
 
-        // Partículas de Chuva
         const rainDrops = [];
         for (let i = 0; i < 150; i++) {
             rainDrops.push({
@@ -1326,12 +1433,10 @@
 
         let sunAngle = 0;
 
-        // Controles de Teclado
         const keys = {};
         window.addEventListener('keydown', (e) => keys[e.key] = true);
         window.addEventListener('keyup', (e) => keys[e.key] = false);
 
-        // Suporte aos Botões na Tela (Touch & Mouse)
         function bindTouchControl(btnId, keyName) {
             const btn = document.getElementById(btnId);
             const setKey = (val) => { keys[keyName] = val; };
@@ -1348,7 +1453,6 @@
         bindTouchControl('btn-jump', 'ArrowUp');
         bindTouchControl('btn-action-x', 'x');
 
-        // Evento de Clique no Canvas para Seleção de Fase
         canvas.addEventListener('click', (e) => {
             if (gameState !== 'LEVEL_SELECT') return;
 
@@ -1365,7 +1469,6 @@
             });
         });
 
-        // Hover do Mouse no Mapa
         canvas.addEventListener('mousemove', (e) => {
             if (gameState !== 'LEVEL_SELECT') return;
             const rect = canvas.getBoundingClientRect();
@@ -1418,7 +1521,6 @@
             gameState = 'PLAYING';
             canvas.style.cursor = 'default';
 
-            // Reset do Nível
             isSunny = false;
             clipboard.collected = false;
 
@@ -1481,12 +1583,10 @@
         function update() {
             if (gameState !== 'PLAYING') return;
 
-            // Movimento Horizontal
             mind.vx = 0;
             if (keys['ArrowLeft'] || keys['a'] || keys['A']) mind.vx = -mind.speed;
             if (keys['ArrowRight'] || keys['d'] || keys['D']) mind.vx = mind.speed;
 
-            // Pulo
             if ((keys['ArrowUp'] || keys['w'] || keys['W'] || keys[' ']) && mind.grounded) {
                 mind.vy = mind.jumpPower;
                 mind.grounded = false;
@@ -1496,7 +1596,6 @@
             mind.x += mind.vx;
             mind.y += mind.vy;
 
-            // Colisão com Plataformas (Jogador)
             mind.grounded = false;
             platforms.forEach(plat => {
                 if (mind.x < plat.x + plat.width &&
@@ -1513,7 +1612,6 @@
             if (mind.x < 0) mind.x = 0;
             if (mind.x + mind.width > canvas.width) mind.x = canvas.width - mind.width;
 
-            // Comportamento do Vilão (Se não foi derrotado)
             if (!villain.defeated) {
                 let dx = mind.x - villain.x;
                 
@@ -1527,7 +1625,7 @@
                     let playerIsAbove = mind.y + mind.height < villain.y - 15;
                     let closeHorizontally = Math.abs(dx) < 220;
                     
-                    if ((playerIsAbove && closeHorizontally) || Math.random() < 0.015) {
+                    if ((playerIsAbove && closeHorizontally) || Math.random() < 0.012) {
                         villain.vy = villain.jumpPower;
                         villain.grounded = false;
                     }
@@ -1537,7 +1635,6 @@
                 villain.x += villain.vx;
                 villain.y += villain.vy;
 
-                // Colisão do Vilão com Plataformas
                 villain.grounded = false;
                 platforms.forEach(plat => {
                     if (villain.x < plat.x + plat.width &&
@@ -1554,7 +1651,6 @@
                 if (villain.x < 0) villain.x = 0;
                 if (villain.x + villain.width > canvas.width) villain.x = canvas.width - villain.width;
 
-                // Colisão com o Vilão antes de pegar o objeto -> Reinicia a fase
                 if (!clipboard.collected) {
                     if (mind.x < villain.x + villain.width &&
                         mind.x + mind.width > villain.x &&
@@ -1567,7 +1663,6 @@
                 }
             }
 
-            // Pegar Prancheta
             if (!clipboard.collected) {
                 if (mind.x < clipboard.x + clipboard.width &&
                     mind.x + mind.width > clipboard.x &&
@@ -1580,7 +1675,6 @@
                 }
             }
 
-            // Ação do Botão X (Acolhimento após pegar a prancheta)
             if (clipboard.collected && !villain.defeated && (keys['x'] || keys['X'])) {
                 let distX = Math.abs((mind.x + mind.width / 2) - (villain.x + villain.width / 2));
                 let distY = Math.abs((mind.y + mind.height / 2) - (villain.y + villain.height / 2));
@@ -1590,7 +1684,6 @@
                 }
             }
 
-            // Animação de Chuva
             if (!isSunny) {
                 rainDrops.forEach(drop => {
                     drop.y += drop.speed;
@@ -1603,16 +1696,13 @@
             }
         }
 
-        // Desenhar o Mapa
         function drawMap() {
             const w = canvas.width;
             const h = canvas.height;
 
-            // Gramado
             ctx.fillStyle = '#38a832';
             ctx.fillRect(0, 0, w, h);
 
-            // Rio na Esquerda
             ctx.fillStyle = '#1e88e5';
             ctx.beginPath();
             ctx.moveTo(w * 0.35, 0);
@@ -1623,20 +1713,16 @@
             ctx.closePath();
             ctx.fill();
 
-            // Palmeiras do lado esquerdo
             drawPalmTree(w * 0.08, h * 0.15);
             drawPalmTree(w * 0.16, h * 0.20);
             drawPalmTree(w * 0.07, h * 0.60);
 
-            // Palmeiras do lado direito
             drawPalmTree(w * 0.8, h * 0.50);
             drawPalmTree(w * 0.88, h * 0.70);
 
-            // Pirâmides no canto superior direito
             drawPyramid(w * 0.85, h * 0.15, 50);
             drawPyramid(w * 0.92, h * 0.22, 80);
 
-            // Caminho de Areia (em "S")
             ctx.strokeStyle = '#e6d29d';
             ctx.lineWidth = Math.min(w, h) * 0.08;
             ctx.lineCap = 'round';
@@ -1649,7 +1735,6 @@
             ctx.lineTo(levelNodes[4].x, levelNodes[4].y);
             ctx.stroke();
 
-            // Nós das Fases
             levelNodes.forEach(node => {
                 ctx.fillStyle = '#ff3300';
                 ctx.beginPath();
@@ -1716,13 +1801,11 @@
             ctx.stroke();
         }
 
-        // Desenhar a Skin do Player (Mind)
         function drawBrainPlayer(x, y, w, h) {
             ctx.save();
             let cx = x + w / 2;
             let topY = y;
 
-            // Pernas Palito Pretas
             ctx.strokeStyle = '#000000';
             ctx.lineWidth = 3.5;
             ctx.lineCap = 'square';
@@ -1734,14 +1817,12 @@
             ctx.lineTo(cx + 5, topY + 36);
             ctx.stroke();
 
-            // Sapatos Vermelhos
             ctx.fillStyle = '#e50000';
             ctx.beginPath();
             ctx.ellipse(cx - 8, topY + 38, 7, 4, 0, 0, Math.PI * 2);
             ctx.ellipse(cx + 8, topY + 38, 7, 4, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Estrutura Principal do Cérebro Rosa
             ctx.fillStyle = '#ffc0cb';
             ctx.strokeStyle = '#fbaed2';
             ctx.lineWidth = 2.5;
@@ -1758,7 +1839,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Ranhuras internas
             ctx.strokeStyle = '#fbaed2';
             ctx.lineWidth = 1.8;
             ctx.lineJoin = 'round';
@@ -1773,14 +1853,12 @@
             ctx.lineTo(cx + 5, topY + 14);
             ctx.stroke();
 
-            // Olhos
             ctx.fillStyle = '#000000';
             ctx.beginPath();
             ctx.arc(cx - 4, topY + 11, 2, 0, Math.PI * 2);
             ctx.arc(cx + 4, topY + 11, 2, 0, Math.PI * 2);
             ctx.fill();
 
-            // Sorriso Feliz
             ctx.strokeStyle = '#000000';
             ctx.lineWidth = 1.8;
             ctx.beginPath();
@@ -1790,7 +1868,6 @@
             ctx.restore();
         }
 
-        // Skin do Vilão da Tristeza
         function drawSadnessVillain(x, y, w, h) {
             ctx.save();
             let scaleX = w / 48;
@@ -1800,7 +1877,6 @@
 
             let cx = 24;
 
-            // Poça de água no chão
             ctx.fillStyle = 'rgba(10, 30, 80, 0.8)';
             ctx.beginPath();
             ctx.ellipse(cx, 58, 20, 4, 0, 0, Math.PI * 2);
@@ -1811,11 +1887,9 @@
             ctx.ellipse(cx + 8, 58, 4, 1, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Brilho Azul Externo (Aura)
             ctx.shadowColor = '#00d2ff';
             ctx.shadowBlur = 12;
 
-            // Corpo Fantasmagórico
             ctx.fillStyle = '#1565c0';
             ctx.strokeStyle = '#00d2ff';
             ctx.lineWidth = 2;
@@ -1834,21 +1908,18 @@
 
             ctx.shadowBlur = 0;
 
-            // Ondulações no topo e laterais
             ctx.fillStyle = '#0d47a1';
             ctx.beginPath();
             ctx.bezierCurveTo(cx - 18, 12, cx - 24, 22, cx - 16, 28);
             ctx.bezierCurveTo(cx - 20, 20, cx - 14, 14, cx - 18, 12);
             ctx.fill();
 
-            // Braços Encolhidos
             ctx.fillStyle = '#1976d2';
             ctx.beginPath();
             ctx.ellipse(cx - 10, 32, 5, 3, -0.3, 0, Math.PI * 2);
             ctx.ellipse(cx + 10, 32, 5, 3, 0.3, 0, Math.PI * 2);
             ctx.fill();
 
-            // Sobrancelhas Tristes
             ctx.strokeStyle = '#0d47a1';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -1858,21 +1929,18 @@
             ctx.quadraticCurveTo(cx + 8, 10, cx + 4, 18);
             ctx.stroke();
 
-            // Olhos Fechados / Caídos
             ctx.fillStyle = '#0a192f';
             ctx.beginPath();
             ctx.ellipse(cx - 8, 20, 4, 6, 0.2, 0, Math.PI * 2);
             ctx.ellipse(cx + 8, 20, 4, 6, -0.2, 0, Math.PI * 2);
             ctx.fill();
 
-            // Boca Triste Abrindo
             ctx.beginPath();
             ctx.moveTo(cx - 6, 30);
             ctx.quadraticCurveTo(cx, 25, cx + 6, 30);
             ctx.quadraticCurveTo(cx, 34, cx - 6, 30);
             ctx.fill();
 
-            // Lágrimas
             ctx.fillStyle = '#80d8ff';
             ctx.beginPath();
             ctx.moveTo(cx - 8, 24);
@@ -1888,7 +1956,6 @@
             ctx.closePath();
             ctx.fill();
 
-            // Gotas caindo
             ctx.beginPath();
             ctx.arc(cx - 9, 44, 1.5, 0, Math.PI * 2);
             ctx.arc(cx + 11, 46, 1.5, 0, Math.PI * 2);
@@ -1898,7 +1965,6 @@
             ctx.restore();
         }
 
-        // Skin do Vilão da Raiva
         function drawAngerVillain(x, y, w, h) {
             ctx.save();
             let scaleX = w / 48;
@@ -1908,7 +1974,6 @@
 
             let cx = 24;
 
-            // Fumaça saindo da cabeça
             ctx.fillStyle = 'rgba(60, 60, 60, 0.4)';
             ctx.beginPath();
             ctx.arc(cx - 4, 2, 5, 0, Math.PI * 2);
@@ -1916,11 +1981,9 @@
             ctx.arc(cx - 2, -10, 6, 0, Math.PI * 2);
             ctx.fill();
 
-            // Aura de fogo/calor ao redor
             ctx.shadowColor = '#ff3300';
             ctx.shadowBlur = 12;
 
-            // Machado de Guerra Flamejante
             ctx.strokeStyle = '#5a2205';
             ctx.lineWidth = 3.5;
             ctx.beginPath();
@@ -1928,7 +1991,6 @@
             ctx.lineTo(30, 28);
             ctx.stroke();
 
-            // Lâmina Dupla do Machado
             ctx.fillStyle = '#ff3300';
             ctx.strokeStyle = '#ffcc00';
             ctx.lineWidth = 1.5;
@@ -1940,7 +2002,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Lâmina menor traseira
             ctx.beginPath();
             ctx.moveTo(14, 44);
             ctx.bezierCurveTo(22, 38, 18, 52, 8, 50);
@@ -1948,7 +2009,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Demônio de Magma
             ctx.fillStyle = '#b30000';
             ctx.strokeStyle = '#ff3300';
             ctx.lineWidth = 2;
@@ -1977,7 +2037,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Rachaduras de Magma
             ctx.strokeStyle = '#ffea00';
             ctx.lineWidth = 1.8;
             ctx.beginPath();
@@ -1992,7 +2051,6 @@
             ctx.lineTo(cx + 12, 50);
             ctx.stroke();
 
-            // Olhos Flamejantes Amarelos
             ctx.shadowColor = '#ffff00';
             ctx.shadowBlur = 8;
             ctx.fillStyle = '#ffea00';
@@ -2010,7 +2068,6 @@
             ctx.closePath();
             ctx.fill();
 
-            // Boca com Dentes Afiados
             ctx.fillStyle = '#ffea00';
             ctx.beginPath();
             ctx.moveTo(cx - 9, 23);
@@ -2032,7 +2089,6 @@
             ctx.restore();
         }
 
-        // Skin do Vilão do Medo
         function drawFearVillain(x, y, w, h) {
             ctx.save();
             let scaleX = w / 48;
@@ -2060,7 +2116,6 @@
             ctx.closePath();
             ctx.fill();
 
-            // Capa Fantasmagórica
             ctx.fillStyle = '#2d114d';
             ctx.strokeStyle = '#6a0dad';
             ctx.lineWidth = 1.8;
@@ -2085,13 +2140,11 @@
             ctx.fill();
             ctx.stroke();
 
-            // Interior Escuro
             ctx.fillStyle = '#120524';
             ctx.beginPath();
             ctx.ellipse(cx, 13, 9, 10, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Braços e Garras
             ctx.strokeStyle = '#52228c';
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -2103,7 +2156,6 @@
             ctx.lineTo(cx + 12, 42);
             ctx.stroke();
 
-            // Múltiplos Olhos
             ctx.shadowColor = '#df80ff';
             ctx.shadowBlur = 6;
             ctx.fillStyle = '#e066ff';
@@ -2123,7 +2175,6 @@
             ctx.restore();
         }
 
-        // Skin do Vilão da Ansiedade
         function drawAnxietyVillain(x, y, w, h) {
             ctx.save();
             let scaleX = w / 48;
@@ -2142,7 +2193,6 @@
             ctx.shadowColor = '#ffaa00';
             ctx.shadowBlur = 8;
 
-            // Corpo estrelado / espinhoso
             ctx.fillStyle = '#ffb300';
             ctx.strokeStyle = '#c47d00';
             ctx.lineWidth = 2;
@@ -2175,7 +2225,6 @@
 
             ctx.shadowBlur = 0;
 
-            // Olhos Grandes Tensos
             ctx.fillStyle = '#000000';
             ctx.beginPath();
             ctx.arc(cx - 3, cy + 2, 5.2, 0, Math.PI * 2);
@@ -2194,14 +2243,12 @@
             ctx.arc(cx + 6.5, cy + 3, 1.6, 0, Math.PI * 2);
             ctx.fill();
 
-            // Boca Tensa
             ctx.fillStyle = '#1a0d00';
             ctx.fillRect(cx - 4, cy + 8, 8, 4);
 
             ctx.restore();
         }
 
-        // Skin do Vilão da Timidez
         function drawShynessVillain(x, y, w, h) {
             ctx.save();
             let scaleX = w / 48;
@@ -2216,7 +2263,6 @@
             ctx.ellipse(cx + 1, 57, 16, 3.5, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Capa e Dobras
             ctx.fillStyle = '#b0b7c6';
             ctx.strokeStyle = '#2b303c';
             ctx.lineWidth = 1.6;
@@ -2231,7 +2277,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Capuz
             ctx.fillStyle = '#e8ecf4';
             ctx.beginPath();
             ctx.moveTo(cx + 13, 31);
@@ -2243,7 +2288,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Abertura Escura e Rosto Corado
             ctx.fillStyle = '#301820';
             ctx.beginPath();
             ctx.ellipse(cx, 21, 10, 11, 0, 0, Math.PI * 2);
@@ -2255,7 +2299,6 @@
             ctx.ellipse(cx + 4.8, 24.5, 4.2, 3, 0.2, 0, Math.PI * 2);
             ctx.fill();
 
-            // Olhos Tímidos
             ctx.fillStyle = '#220b12';
             ctx.beginPath();
             ctx.ellipse(cx - 3.5, 20.5, 3.2, 4.2, -0.25, 0, Math.PI * 2);
@@ -2265,7 +2308,6 @@
             ctx.restore();
         }
 
-        // Desenho da Prancheta
         function drawClipboard(x, y, w, h) {
             ctx.save();
             ctx.fillStyle = '#8b5a2b';
@@ -2277,7 +2319,6 @@
             ctx.fillStyle = '#aaaaaa';
             ctx.fillRect(x + w / 2 - 5, y - 2, 10, 5);
 
-            // Símbolo da Psicologia (Psi: Ψ)
             const cx = x + w / 2;
             const cy = y + h / 2 + 2;
 
@@ -2286,13 +2327,11 @@
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
-            // Haste vertical central
             ctx.beginPath();
             ctx.moveTo(cx, cy - 8);
             ctx.lineTo(cx, cy + 8);
             ctx.stroke();
 
-            // Curva (garfo/tridente)
             ctx.beginPath();
             ctx.moveTo(cx - 5, cy - 4);
             ctx.quadraticCurveTo(cx - 5, cy + 3, cx, cy + 3);
@@ -2302,7 +2341,6 @@
             ctx.restore();
         }
 
-        // Renderização Principal do Jogo
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -2335,7 +2373,6 @@
                     });
                 }
 
-                // Renderizar Plataformas
                 platforms.forEach(plat => {
                     ctx.fillStyle = '#4a3b32';
                     ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
@@ -2366,14 +2403,12 @@
             }
         }
 
-        // Loop do Jogo
         function gameLoop() {
             update();
             draw();
             requestAnimationFrame(gameLoop);
         }
 
-        // Inicialização
         resizeCanvas();
         gameLoop();
     </script>

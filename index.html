@@ -269,7 +269,7 @@
 
         #touch-controls-left {
             position: absolute;
-            bottom: max(25px, env(safe-area-inset-bottom, 25px));
+            bottom: max(58px, calc(env(safe-area-inset-bottom, 0px) + 52px));
             left: max(25px, env(safe-area-inset-left, 25px));
             display: flex;
             gap: 15px;
@@ -278,7 +278,7 @@
 
         #touch-controls-right {
             position: absolute;
-            bottom: max(25px, env(safe-area-inset-bottom, 25px));
+            bottom: max(58px, calc(env(safe-area-inset-bottom, 0px) + 52px));
             right: max(25px, env(safe-area-inset-right, 25px));
             display: flex;
             gap: 15px;
@@ -631,12 +631,12 @@
                 left: 10px;
             }
             #touch-controls-left {
-                bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+                bottom: max(48px, calc(env(safe-area-inset-bottom, 0px) + 40px));
                 left: max(16px, env(safe-area-inset-left, 16px));
                 gap: 12px;
             }
             #touch-controls-right {
-                bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+                bottom: max(48px, calc(env(safe-area-inset-bottom, 0px) + 40px));
                 right: max(16px, env(safe-area-inset-right, 16px));
                 gap: 12px;
             }
@@ -1056,7 +1056,7 @@
             collected: false
         };
 
-        // Vilão - 48 x 60
+        // Vilão - 48 x 60 (Pulinho baixo suave)
         let villain = {
             x: 0,
             y: 0,
@@ -1065,7 +1065,7 @@
             vx: 0,
             vy: 0,
             speed: 1.4,
-            jumpPower: -11.5,
+            jumpPower: -4.2,
             grounded: false,
             color: '#4d88ff',
             defeated: false
@@ -1542,6 +1542,7 @@
             villain.vy = 0;
             villain.color = node.color;
             villain.speed = node.speed;
+            villain.jumpPower = -4.2;
             villain.defeated = false;
 
             hudPhase.textContent = `FASE ${levelNum}: ${node.name.toUpperCase()}`;
@@ -1618,6 +1619,7 @@
             if (mind.x < 0) mind.x = 0;
             if (mind.x + mind.width > canvas.width) mind.x = canvas.width - mind.width;
 
+            // Comportamento do Vilão (Pulinho baixo suave no chão, sem escalar plataformas)
             if (!villain.defeated) {
                 let dx = mind.x - villain.x;
                 
@@ -1628,10 +1630,7 @@
                 }
 
                 if (villain.grounded) {
-                    let playerIsAbove = mind.y + mind.height < villain.y - 15;
-                    let closeHorizontally = Math.abs(dx) < 220;
-                    
-                    if ((playerIsAbove && closeHorizontally) || Math.random() < 0.012) {
+                    if (Math.random() < 0.012) {
                         villain.vy = villain.jumpPower;
                         villain.grounded = false;
                     }
@@ -1641,18 +1640,19 @@
                 villain.x += villain.vx;
                 villain.y += villain.vy;
 
+                // Vilão colide apenas com o chão (platforms[0]), ignorando plataformas superiores
                 villain.grounded = false;
-                platforms.forEach(plat => {
-                    if (villain.x < plat.x + plat.width &&
-                        villain.x + villain.width > plat.x &&
-                        villain.y + villain.height >= plat.y &&
-                        villain.y + villain.height <= plat.y + plat.height + villain.vy) {
-                        
-                        villain.y = plat.y - villain.height;
-                        villain.vy = 0;
-                        villain.grounded = true;
-                    }
-                });
+                const groundPlat = platforms[0];
+                if (groundPlat &&
+                    villain.x < groundPlat.x + groundPlat.width &&
+                    villain.x + villain.width > groundPlat.x &&
+                    villain.y + villain.height >= groundPlat.y &&
+                    villain.y + villain.height <= groundPlat.y + groundPlat.height + villain.vy) {
+                    
+                    villain.y = groundPlat.y - villain.height;
+                    villain.vy = 0;
+                    villain.grounded = true;
+                }
 
                 if (villain.x < 0) villain.x = 0;
                 if (villain.x + villain.width > canvas.width) villain.x = canvas.width - villain.width;

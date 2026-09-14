@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CAÇA AS EMOÇÕES - Plataforma</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b0d12;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: default;
+        }
+
+        /* Interface Sobreposta */
+        .overlay-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(11, 13, 18, 0.95);
+            z-index: 10;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Nova Tela Inicial Baseada no Desenho */
+        #screen-start {
+            background-color: #ffffff;
+            color: #000;
+            overflow: hidden;
+            position: absolute;
+            padding: 20px;
+        }
+
+        .doodle-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .start-menu-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Caveat', cursive, sans-serif;
+            font-weight: 900;
+        }
+
+        .title-psico {
+            display: flex;
+            gap: 18px;
+            font-size: 88px;
+            letter-spacing: 4px;
+            line-height: 1;
+        }
+
+        .title-mind {
+            display: flex;
+            gap: 28px;
+            font-size: 64px;
+            letter-spacing: 6px;
+            line-height: 1;
+            margin-bottom: 25px;
+        }
+
+        .c-p { color: #e52521; }
+        .c-s { color: #f5c400; transform: rotate(-6deg); }
+        .c-i { color: #e65100; transform: scaleY(1.1); }
+        .c-c { color: #1fb141; transform: rotate(5deg); }
+        .c-o { color: #2952b2; transform: scaleX(1.35) rotate(-2deg); }
+
+        .c-m { color: #8e44ad; transform: rotate(-4deg); }
+        .c-ii { color: #bca080; }
+        .c-n { color: #f8a5c2; transform: rotate(4deg); }
+        .c-d { color: #f39c12; transform: rotate(-3deg); }
+
+        .btn-doodle-play {
+            background: #ffffff;
+            color: #000000;
+            border: 6px solid #000000;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            padding: 12px 64px;
+            font-size: 62px;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Caveat', cursive, sans-serif;
+            font-weight: 900;
+            letter-spacing: 8px;
+            cursor: pointer;
+            box-shadow: 4px 6px 0px rgba(0,0,0,0.15);
+            transition: all 0.15s ease-in-out;
+            margin-top: 10px;
+        }
+
+        .btn-doodle-play:hover {
+            transform: scale(1.06) rotate(-1.5deg);
+            background: #fafafa;
+        }
+
+        .btn-doodle-play:active {
+            transform: scale(0.96) rotate(1deg);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d2ff, #0072ff);
+            color: #fff;
+            border: none;
+            padding: 16px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.7);
+        }
+
+        /* Créditos do Criador na Tela Inicial */
+        .creator-credits {
+            position: absolute;
+            bottom: 18px;
+            left: 20px;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e272e;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+            pointer-events: auto;
+        }
+
+        .creator-credits span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .creator-credits a {
+            color: #8e24aa;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .creator-credits a:hover {
+            color: #d81b60;
+            text-decoration: underline;
+        }
+
+        /* HUD do Jogo */
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 5;
+            font-weight: bold;
+        }
+
+        .hud-box {
+            background: rgba(0,0,0,0.6);
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            font-size: 16px;
+        }
+
+        #btn-back-menu {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 12;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        /* Controles Virtuais Touch / Telas Pequenas */
+        .touch-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            touch-action: manipulation;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .touch-btn:active {
+            background: rgba(0, 210, 255, 0.6);
+            border-color: #00d2ff;
+            transform: scale(0.95);
+        }
+
+        #touch-controls-left {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            display: flex;
+            gap: 15px;
+            z-index: 6;
+        }
+
+        #touch-controls-right {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            gap: 15px;
+            z-index: 6;
+        }
+
+        #btn-action-x {
+            background: rgba(0, 210, 255, 0.3);
+            border-color: #00d2ff;
+        }
+
+        /* Tela Educativa / Acolhimento */
+        .psycho-card {
+            background: #141923;
+            border: 2px solid #00d2ff;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 900px;
+            width: 90%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
+        }
+
+        .psycho-card img {
+            width: 260px;
+            height: auto;
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .psycho-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .psycho-content h2 {
+            font-size: 32px;
+            color: #00d2ff;
+            margin-bottom: 15px;
+        }
+
+        .psycho-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #e0e6ed;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .psycho-content ul {
+            margin-bottom: 25px;
+            padding-left: 20px;
+            color: #b0c4de;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .psycho-content ul li {
+            margin-bottom: 6px;
+        }
+
+        /* ================= TELA DO QUESTIONÁRIO (ESTILO DA IMAGEM) ================= */
+        #screen-quiz {
+            background: #eef2f7;
+            padding: 15px;
+            z-index: 30;
+        }
+
+        .phone-quiz-wrapper {
+            background: #f7f9fc;
+            width: 100%;
+            max-width: 440px;
+            height: 94vh;
+            border-radius: 36px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 4px solid #1f1435;
+        }
+
+        .quiz-top-bar {
+            background: #8e24aa;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+        }
+
+        .quiz-crown {
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quiz-progress-pill {
+            background: rgba(255, 255, 255, 0.22);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quiz-body {
+            flex: 1;
+            padding: 18px 18px 10px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .quiz-badge {
+            align-self: flex-start;
+            background: #eceff1;
+            color: #546e7a;
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .quiz-card-question {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 22px 18px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            margin-bottom: 18px;
+        }
+
+        .quiz-card-question h3 {
+            color: #2c3437;
+            font-size: 18px;
+            font-weight: 800;
+            text-align: center;
+            line-height: 1.45;
+        }
+
+        .quiz-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-option-btn {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px 14px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quiz-option-btn:hover {
+            border-color: #ba68c8;
+            background: #faf5fc;
+        }
+
+        .quiz-option-btn.selected {
+            background: #f3e5f5;
+            border-color: #8e24aa;
+            color: #6a1b9a;
+            font-weight: 700;
+        }
+
+        .quiz-opt-letter {
+            background: #eceff1;
+            color: #455a64;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+
+        .quiz-option-btn.selected .quiz-opt-letter {
+            background: #8e24aa;
+            color: #ffffff;
+        }
+
+        .quiz-footer {
+            padding: 12px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f7f9fc;
+        }
+
+        .quiz-btn-next {
+            background: #8e24aa;
+            color: #ffffff;
+            border: none;
+            border-radius: 18px;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(142, 36, 170, 0.35);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .quiz-btn-next:disabled {
+            background: #cfd8dc;
+            color: #90a4ae;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .quiz-bottom-row {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 4px;
+        }
+
+        .quiz-pill-tag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #546e7a;
+            background: #eceff1;
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+
+        /* ================= TELAS FINAIS DE RESULTADO ================= */
+        .result-card {
+            background: #181d28;
+            border-radius: 28px;
+            padding: 35px 25px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+            z-index: 40;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-card-victory {
+            border: 3px solid #ffca28;
+            box-shadow: 0 0 35px rgba(255, 202, 40, 0.4);
+        }
+
+        .result-card-retry {
+            border: 3px solid #f48fb1;
+            box-shadow: 0 0 35px rgba(244, 143, 177, 0.35);
+        }
+
+        .result-card h2 {
+            font-size: 30px;
+            line-height: 1.2;
+        }
+
+        .result-card p {
+            font-size: 17px;
+            line-height: 1.5;
+            color: #e0e6ed;
+        }
+
+        .result-score-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .title-psico { font-size: 50px; gap: 8px; }
+            .title-mind { font-size: 38px; gap: 14px; margin-bottom: 18px; }
+            .btn-doodle-play { font-size: 40px; padding: 10px 42px; border-width: 4px; }
+            .creator-credits { font-size: 11px; bottom: 10px; left: 12px; }
+            .psycho-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .psycho-card img {
+                width: 160px;
+            }
+            .psycho-content {
+                align-items: center;
+            }
+            .psycho-content p, .psycho-content ul {
+                text-align: left;
+            }
+            .touch-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- HUD em jogo -->
+        <div id="hud" class="hidden">
+            <div class="hud-box" id="hud-phase">FASE 1: TRISTEZA</div>
+            <div class="hud-box" id="hud-status">OBJETIVO: Pegue a prancheta!</div>
+        </div>
+
+        <!-- Canvas Principal -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Botão Voltar para o Mapa -->
+        <button id="btn-back-menu" class="btn hidden" onclick="showLevelSelect()">MAPA</button>
+
+        <!-- Controles Virtuais Touch / Mobile -->
+        <div id="touch-controls-left" class="hidden">
+            <div class="touch-btn" id="btn-left">◀</div>
+            <div class="touch-btn" id="btn-right">▶</div>
+        </div>
+        <div id="touch-controls-right" class="hidden">
+            <div class="touch-btn" id="btn-action-x">X</div>
+            <div class="touch-btn" id="btn-jump">▲</div>
+        </div>
+
+        <!-- Tela Inicial Reestilizada -->
+        <div id="screen-start" class="overlay-screen">
+            <svg class="doodle-bg" viewBox="0 0 1000 560" preserveAspectRatio="none">
+                <!-- Esquerda -->
+                <path d="M 60 115 C 30 110, 30 75, 60 75 C 90 75, 95 105, 75 125 C 55 145, 40 145, 45 150" fill="none" stroke="#d61f1f" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 45 160 Q 95 145, 60 215 Q 35 265, 80 270 Q 120 270, 95 235" fill="none" stroke="#f0d313" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 125 120 Q 100 240, 70 270 Q 55 285, 90 275 Q 120 260, 90 220" fill="none" stroke="#800a20" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 105 155 Q 140 115, 140 195 Q 140 230, 165 205" fill="none" stroke="#d61f1f" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 135 125 C 100 135, 90 195, 145 195" fill="none" stroke="#1fb141" stroke-width="5.5" stroke-linecap="round"/>
+
+                <path d="M 35 345 C 90 350, 90 300, 35 305" fill="none" stroke="#1fb141" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 35 390 C 80 390, 80 435, 40 435 C 25 435, 35 400, 90 475" fill="none" stroke="#d61f1f" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 120 310 C 160 305, 155 340, 120 340 C 95 340, 105 380, 110 410" fill="none" stroke="#800a20" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 175 355 C 235 365, 235 415, 180 415 C 165 415, 175 375, 205 395" fill="none" stroke="#1fb141" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 125 415 Q 110 515, 145 520 Q 175 520, 160 480" fill="none" stroke="#f0d313" stroke-width="5.5" stroke-linecap="round"/>
+
+                <!-- Direita -->
+                <path d="M 830 135 C 805 90, 865 75, 875 110 C 885 145, 840 160, 855 180" fill="none" stroke="#f0d313" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 945 115 C 880 115, 880 175, 940 180 C 955 180, 955 155, 920 155" fill="none" stroke="#d61f1f" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 865 165 Q 765 240, 800 290 Q 825 320, 810 300" fill="none" stroke="#800a20" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 950 225 C 915 230, 915 285, 950 280" fill="none" stroke="#1fb141" stroke-width="5.5" stroke-linecap="round"/>
+                
+                <path d="M 735 305 C 740 375, 680 375, 715 330" fill="none" stroke="#1fb141" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 895 300 Q 825 365, 825 435" fill="none" stroke="#800a20" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 800 395 C 800 465, 725 480, 770 435" fill="none" stroke="#d61f1f" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 830 500 Q 830 405, 915 425 Q 920 445, 885 460" fill="none" stroke="#f0d313" stroke-width="5.5" stroke-linecap="round"/>
+                <path d="M 945 470 C 925 540, 955 520, 925 500" fill="none" stroke="#1fb141" stroke-width="5.5" stroke-linecap="round"/>
+            </svg>
+
+            <div class="start-menu-content">
+                <div class="title-psico">
+                    <span class="c-p">C</span>
+                    <span class="c-s">A</span>
+                    <span class="c-i">Ç</span>
+                    <span class="c-c">A</span>
+                    <span class="c-o">&nbsp;</span>
+                    <span class="c-p">A</span>
+                    <span class="c-s">S</span>
+                </div>
+                <div class="title-mind">
+                    <span class="c-m">E</span>
+                    <span class="c-ii">M</span>
+                    <span class="c-n">O</span>
+                    <span class="c-d">Ç</span>
+                    <span class="c-m">Õ</span>
+                    <span class="c-ii">E</span>
+                    <span class="c-n">S</span>
+                </div>
+                <button class="btn-doodle-play" onclick="showLevelSelect()">PLAY</button>
+            </div>
+
+            <!-- Créditos no canto esquerdo inferior -->
+            <div class="creator-credits">
+                <span>Criador: Bernardo Rodrigues</span>
+                <span>Instagram: <a href="https://instagram.com/usuario_nao_esta_entre_nos" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>@usuario_nao_esta_entre_nos</a></span>
+            </div>
+        </div>
+
+        <!-- Tela de Reflexão da Tristeza (Fase 1) -->
+        <div id="screen-reflection" class="overlay-screen hidden">
+            <div class="psycho-card">
+                <img src="gi.jpeg" alt="Psicóloga Psicoma">
+                <div class="psycho-content">
+                    <h2>QUANDO DÁ TRISTEZA 😢</h2>
+                    <p>
+                        Ficar <b>triste</b> acontece com todo mundo quando algo chato acontece ou a gente se machuca. É normal chorar às vezes!
+                    </p>
+                    <p><b>O que ajuda o coração ficar feliz:</b></p>
+                    <ul>
+                        <li><b>Peça um abraço:</b> O carinho da mamãe ou do papai cura rapidinho.</li>
+                        <li><b>Conte o que houve:</b> Falar com quem você ama tira o aperto do peito.</li>
+                        <li><b>Faça algo legal:</b> Brinque, descanse e lembre que logo a alegria volta!</li>
+                    </ul>
+                    <button class="btn" onclick="showLevelSelect()">PROSSEGUIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Reflexão da Raiva (Fase 2) -->
+        <div id="screen-reflection-anger" class="overlay-screen hidden">
+            <div class="psycho-card">
+                <img src="ruiva.jpeg" alt="Psicóloga Psicoma - Raiva">
+                <div class="psycho-content">
+                    <h2>QUANDO DÁ RAIVA 😡</h2>
+                    <p>
+                        A <b>raiva</b> é quando a gente fica muito bravo e parece que vai explodir como um vulcão!
+                    </p>
+                    <p><b>Como esfriar a cabecinha:</b></p>
+                    <ul>
+                        <li><b>Cheire a flor e sopre a vela:</b> Puxe o ar bem fundo e solte devagar.</li>
+                        <li><b>Não bata nem quebre nada:</b> Espere a raiva passar antes de falar.</li>
+                        <li><b>Converse com calma:</b> Diga o que te deixou bravo sem gritar.</li>
+                    </ul>
+                    <button class="btn" onclick="showLevelSelect()">PROSSEGUIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Reflexão do Medo (Fase 3) -->
+        <div id="screen-reflection-fear" class="overlay-screen hidden">
+            <div class="psycho-card">
+                <img src="homi.jpeg" alt="Psicólogo Psicoma">
+                <div class="psycho-content">
+                    <h2>QUANDO DÁ MEDO 😨</h2>
+                    <p>
+                        O <b>medo</b> faz nosso coração bater forte para nos proteger do perigo. Mas monstros de mentira não existem!
+                    </p>
+                    <p><b>Como ser corajoso:</b></p>
+                    <ul>
+                        <li><b>Segure na mão de um adulto:</b> Ficar perto de quem cuida de você dá força.</li>
+                        <li><b>Ligue uma luzinha:</b> O escuro vai embora e tudo fica calmo.</li>
+                        <li><b>Vá devagarinho:</b> Não precisa ter pressa para tentar coisas novas.</li>
+                    </ul>
+                    <button class="btn" onclick="showLevelSelect()">PROSSEGUIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Reflexão da Ansiedade (Fase 4) -->
+        <div id="screen-reflection-anxiety" class="overlay-screen hidden">
+            <div class="psycho-card">
+                <img src="morena.jpeg" alt="Psicóloga Psicoma - Ansiedade">
+                <div class="psycho-content">
+                    <h2>QUANDO DÁ NERVOSO 🌀</h2>
+                    <p>
+                        A <b>ansiedade</b> é quando a gente fica com pressa na barriga, pensando muito no que vai acontecer amanhã.
+                    </p>
+                    <p><b>Como acalmar o corpinho:</b></p>
+                    <ul>
+                        <li><b>Olhe ao seu redor:</b> Ache 3 coisas bem coloridas na sala.</li>
+                        <li><b>Brinque de respirar:</b> Solte o ar bem devagar, como enchendo um balão.</li>
+                        <li><b>Pense no agora:</b> Curta o hoje, porque amanhã vai dar tudo certo!</li>
+                    </ul>
+                    <button class="btn" onclick="showLevelSelect()">PROSSEGUIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Reflexão da Timidez (Fase 5) -->
+        <div id="screen-reflection-shyness" class="overlay-screen hidden">
+            <div class="psycho-card">
+                <img src="cumprida.jpeg" alt="Psicóloga Psicoma - Timidez">
+                <div class="psycho-content">
+                    <h2>QUANDO DÁ VERGONHA 🙈</h2>
+                    <p>
+                        A <b>timidez</b> é quando a bochecha esquenta e a gente quer se esconder atrás de alguém.
+                    </p>
+                    <p><b>Como fazer amigos:</b></p>
+                    <ul>
+                        <li><b>Dê um sorrisinho:</b> Um sorriso simpático já é um lindo 'oi'.</li>
+                        <li><b>Vá no seu tempo:</b> Pode ficar pertinho olhando antes de entrar na brincadeira.</li>
+                        <li><b>Tente perguntar:</b> Diga bem baixinho: 'Posso brincar também?'</li>
+                    </ul>
+                    <button class="btn" onclick="startQuiz()">PROSSEGUIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= NOVO QUESTIONÁRIO EMOCIONAL (QUIZ) ================= -->
+        <div id="screen-quiz" class="overlay-screen hidden">
+            <div class="phone-quiz-wrapper">
+                <div class="quiz-top-bar">
+                    <div class="quiz-crown">👑</div>
+                    <div class="quiz-progress-pill" id="quiz-header-counter">Pergunta 1/5</div>
+                </div>
+
+                <div class="quiz-body">
+                    <div class="quiz-badge">🎲 Desafio Caça as Emoções</div>
+                    <div class="quiz-card-question">
+                        <h3 id="quiz-question-text">Pergunta...</h3>
+                    </div>
+
+                    <div class="quiz-options-list" id="quiz-options-container">
+                        <!-- Alternativas injetadas via JS -->
+                    </div>
+                </div>
+
+                <div class="quiz-footer">
+                    <button class="quiz-btn-next" id="quiz-btn-confirm" disabled onclick="handleQuizNext()">PROSSEGUIR</button>
+                    <div class="quiz-bottom-row">
+                        <div class="quiz-pill-tag">💣 GRÁTIS</div>
+                        <div class="quiz-pill-tag">🔄 GRÁTIS</div>
+                        <div class="quiz-pill-tag">✔ GRÁTIS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TELA FINAL: VITÓRIA (NOTA 3 A 5 - TROFÉU) ================= -->
+        <div id="screen-victory" class="overlay-screen hidden">
+            <div class="result-card result-card-victory">
+                <canvas id="canvasTrophy" width="220" height="220"></canvas>
+                <h2 style="color: #ffca28;">PARABÉNS, CAMPEÃO! 🏆</h2>
+                <div class="result-score-badge" id="victory-score-text">Nota: 5 / 5</div>
+                <p>
+                    Você compreendeu perfeitamente como lidar com suas emoções! Seu coração e sua mente trabalharam juntos nessa jornada incrível!
+                </p>
+                <button class="btn" onclick="restartGame()">JOGAR NOVAMENTE</button>
+            </div>
+        </div>
+
+        <!-- ================= TELA FINAL: INCENTIVO (NOTA < 3 - CÉREBRO) ================= -->
+        <div id="screen-retry" class="overlay-screen hidden">
+            <div class="result-card result-card-retry">
+                <canvas id="canvasBrainHero" width="220" height="220"></canvas>
+                <h2 style="color: #ff80ab;">VOCÊ FOI MUITO BEM! 💖</h2>
+                <div class="result-score-badge" id="retry-score-text">Nota: 2 / 5</div>
+                <p>
+                    Estou muito orgulhoso do seu esforço e dedicação! Aprender sobre o que sentimos é um caminho de muita coragem. Você pode recomeçar a aventura sempre que quiser!
+                </p>
+                <button class="btn" onclick="restartGame()">RECOMEÇAR AVENTURA</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ajuste dinâmico de Tela Cheia
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            updateLayout();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Elementos de UI
+        const screenStart = document.getElementById('screen-start');
+        const screenReflection = document.getElementById('screen-reflection');
+        const screenReflectionAnger = document.getElementById('screen-reflection-anger');
+        const screenReflectionFear = document.getElementById('screen-reflection-fear');
+        const screenReflectionAnxiety = document.getElementById('screen-reflection-anxiety');
+        const screenReflectionShyness = document.getElementById('screen-reflection-shyness');
+        const screenQuiz = document.getElementById('screen-quiz');
+        const screenVictory = document.getElementById('screen-victory');
+        const screenRetry = document.getElementById('screen-retry');
+
+        const hud = document.getElementById('hud');
+        const hudPhase = document.getElementById('hud-phase');
+        const hudStatus = document.getElementById('hud-status');
+        const btnBackMenu = document.getElementById('btn-back-menu');
+
+        const touchLeft = document.getElementById('touch-controls-left');
+        const touchRight = document.getElementById('touch-controls-right');
+
+        // Estado do Jogo
+        let gameState = 'MENU'; // MENU, LEVEL_SELECT, PLAYING, REFLECTION, QUIZ, RESULT
+        let currentLevel = 1;
+        let isSunny = false; // Transição do Cenário (Chuva -> Sol)
+
+        // Configuração dos Nós de Fases no Mapa
+        let levelNodes = [];
+
+        // Física da Plataforma
+        const gravity = 0.5;
+        let platforms = [];
+
+        // Mind (Jogador) - Tamanho Base: 32 x 42
+        const mind = {
+            x: 50,
+            y: 0,
+            width: 32,
+            height: 42,
+            vx: 0,
+            vy: 0,
+            speed: 5.5,
+            jumpPower: -12,
+            grounded: false
+        };
+
+        // Prancheta
+        const clipboard = {
+            x: 0,
+            y: 0,
+            width: 24,
+            height: 30,
+            collected: false
+        };
+
+        // Vilão - 48 x 60
+        let villain = {
+            x: 0,
+            y: 0,
+            width: 48,
+            height: 60,
+            vx: 0,
+            vy: 0,
+            speed: 2.2,
+            jumpPower: -11.5,
+            grounded: false,
+            color: '#4d88ff',
+            defeated: false
+        };
+
+        // ================= DADOS DO QUESTIONÁRIO (5 PERGUNTAS: 1 POR EMOÇÃO) =================
+        const quizQuestions = [
+            {
+                // Fase 1: Tristeza
+                q: "Seu brinquedo quebrou e você ficou triste. O que fazer?",
+                opts: [
+                    "Ficar de bico o dia todo.",
+                    "Esconder o brinquedo.",
+                    "Pedir um abraço bem quentinho."
+                ],
+                correct: 2 // C
+            },
+            {
+                // Fase 2: Raiva
+                q: "Pegaram seu giz de cera e você ficou bravo. O que fazer?",
+                opts: [
+                    "Empurrar o colega.",
+                    "Respirar fundo e pedir de volta.",
+                    "Gritar bem alto."
+                ],
+                correct: 1 // B
+            },
+            {
+                // Fase 3: Medo
+                q: "O quarto ficou no escuro e deu medo. O que fazer?",
+                opts: [
+                    "Lembrar que está tudo bem e ligar um abajur.",
+                    "Ficar acordado com medo.",
+                    "Sair correndo pra rua."
+                ],
+                correct: 0 // A
+            },
+            {
+                // Fase 4: Ansiedade
+                q: "Amanhã tem um dia importante e você está nervoso. O que fazer?",
+                opts: [
+                    "Ficar acordado a noite toda.",
+                    "Dormir cedo e descansar.",
+                    "Fingir dodói para não ir."
+                ],
+                correct: 1 // B
+            },
+            {
+                // Fase 5: Timidez
+                q: "Você quer brincar com novos amiguinhos, mas tem vergonha. O que fazer?",
+                opts: [
+                    "Ficar escondido no cantinho.",
+                    "Ir embora na mesma hora.",
+                    "Chegar perto, sorrir e dizer: 'Posso brincar?'"
+                ],
+                correct: 2 // C
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedOptionIndex = null;
+        let quizScore = 0;
+
+        function startQuiz() {
+            screenReflectionShyness.classList.add('hidden');
+            gameState = 'QUIZ';
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            renderQuizTab();
+            screenQuiz.classList.remove('hidden');
+        }
+
+        function renderQuizTab() {
+            selectedOptionIndex = null;
+            const btnNext = document.getElementById('quiz-btn-confirm');
+            btnNext.disabled = true;
+
+            const qData = quizQuestions[currentQuestionIndex];
+            document.getElementById('quiz-header-counter').textContent = `Pergunta ${currentQuestionIndex + 1}/${quizQuestions.length}`;
+            document.getElementById('quiz-question-text').textContent = qData.q;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+
+            qData.opts.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option-btn';
+                btn.innerHTML = `<span class="quiz-opt-letter">${letters[idx]}</span> <span>${optText}</span>`;
+                
+                btn.onclick = () => {
+                    document.querySelectorAll('.quiz-option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedOptionIndex = idx;
+                    btnNext.disabled = false;
+                };
+
+                container.appendChild(btn);
+            });
+        }
+
+        function handleQuizNext() {
+            if (selectedOptionIndex === null) return;
+
+            // Checagem de Acerto
+            if (selectedOptionIndex === quizQuestions[currentQuestionIndex].correct) {
+                quizScore += 1;
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizQuestions.length) {
+                renderQuizTab();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            screenQuiz.classList.add('hidden');
+            gameState = 'RESULT';
+
+            if (quizScore >= 3) {
+                // Nota 3 até 5: Tela de Troféu
+                document.getElementById('victory-score-text').textContent = `Nota: ${quizScore} / 5`;
+                screenVictory.classList.remove('hidden');
+                drawSmilingTrophy();
+            } else {
+                // Nota < 3: Tela do Personagem Cérebro Amigo
+                document.getElementById('retry-score-text').textContent = `Nota: ${quizScore} / 5`;
+                screenRetry.classList.remove('hidden');
+                drawCheeringBrain();
+            }
+        }
+
+        function restartGame() {
+            screenVictory.classList.add('hidden');
+            screenRetry.classList.add('hidden');
+            showLevelSelect();
+        }
+
+        // ================= DESENHO DO TROFÉU GRANDE SORRIDENTE =================
+        function drawSmilingTrophy() {
+            const c = document.getElementById('canvasTrophy');
+            const tCtx = c.getContext('2d');
+            tCtx.clearRect(0, 0, c.width, c.height);
+
+            const cx = c.width / 2;
+            const cy = c.height / 2 + 10;
+
+            // Brilho / Raios atrás
+            tCtx.save();
+            tCtx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+            for (let i = 0; i < 12; i++) {
+                tCtx.beginPath();
+                tCtx.moveTo(cx, cy - 20);
+                tCtx.arc(cx, cy - 20, 100, i * Math.PI / 6, i * Math.PI / 6 + 0.25);
+                tCtx.closePath();
+                tCtx.fill();
+            }
+            tCtx.restore();
+
+            // Base de Madeira / Mármore
+            tCtx.fillStyle = '#4a2c11';
+            tCtx.fillRect(cx - 50, cy + 65, 100, 24);
+            tCtx.fillStyle = '#d4af37';
+            tCtx.fillRect(cx - 35, cy + 70, 70, 14);
+
+            // Haste do Troféu
+            tCtx.fillStyle = '#e6b800';
+            tCtx.fillRect(cx - 14, cy + 35, 28, 30);
+
+            // Alças do Troféu
+            tCtx.strokeStyle = '#f39c12';
+            tCtx.lineWidth = 12;
+            tCtx.beginPath();
+            tCtx.arc(cx - 54, cy - 20, 28, 0.4 * Math.PI, 1.6 * Math.PI);
+            tCtx.stroke();
+
+            tCtx.beginPath();
+            tCtx.arc(cx + 54, cy - 20, 28, 1.4 * Math.PI, 0.6 * Math.PI);
+            tCtx.stroke();
+
+            // Taça Principal Dourada
+            tCtx.fillStyle = '#ffcf10';
+            tCtx.strokeStyle = '#e67e22';
+            tCtx.lineWidth = 4;
+
+            tCtx.beginPath();
+            tCtx.moveTo(cx - 55, cy - 65);
+            tCtx.lineTo(cx + 55, cy - 65);
+            tCtx.quadraticCurveTo(cx + 55, cy + 30, cx, cy + 35);
+            tCtx.quadraticCurveTo(cx - 55, cy + 30, cx - 55, cy - 65);
+            tCtx.closePath();
+            tCtx.fill();
+            tCtx.stroke();
+
+            // Brilho dourado reflexivo
+            tCtx.fillStyle = '#ffeaa7';
+            tCtx.beginPath();
+            tCtx.ellipse(cx - 30, cy - 30, 8, 26, -0.2, 0, Math.PI * 2);
+            tCtx.fill();
+
+            // Estrelinha na testa do troféu
+            tCtx.fillStyle = '#ffffff';
+            tCtx.beginPath();
+            tCtx.arc(cx, cy - 48, 5, 0, Math.PI * 2);
+            tCtx.fill();
+
+            // Olhos Grandes e Felizes com Brilho
+            // Olho Esquerdo
+            tCtx.fillStyle = '#1e272e';
+            tCtx.beginPath();
+            tCtx.ellipse(cx - 20, cy - 14, 9, 13, 0, 0, Math.PI * 2);
+            tCtx.fill();
+            tCtx.fillStyle = '#ffffff';
+            tCtx.beginPath();
+            tCtx.arc(cx - 23, cy - 18, 3.5, 0, Math.PI * 2);
+            tCtx.arc(cx - 17, cy - 10, 1.8, 0, Math.PI * 2);
+            tCtx.fill();
+
+            // Olho Direito
+            tCtx.fillStyle = '#1e272e';
+            tCtx.beginPath();
+            tCtx.ellipse(cx + 20, cy - 14, 9, 13, 0, 0, Math.PI * 2);
+            tCtx.fill();
+            tCtx.fillStyle = '#ffffff';
+            tCtx.beginPath();
+            tCtx.arc(cx + 17, cy - 18, 3.5, 0, Math.PI * 2);
+            tCtx.arc(cx + 23, cy - 10, 1.8, 0, Math.PI * 2);
+            tCtx.fill();
+
+            // Bochechas Rosadas
+            tCtx.fillStyle = 'rgba(255, 99, 72, 0.4)';
+            tCtx.beginPath();
+            tCtx.ellipse(cx - 32, cy + 2, 9, 5, 0, 0, Math.PI * 2);
+            tCtx.ellipse(cx + 32, cy + 2, 9, 5, 0, 0, Math.PI * 2);
+            tCtx.fill();
+
+            // Sorriso Radiante Aberto
+            tCtx.fillStyle = '#c0392b';
+            tCtx.beginPath();
+            tCtx.arc(cx, cy + 2, 16, 0.1 * Math.PI, 0.9 * Math.PI);
+            tCtx.closePath();
+            tCtx.fill();
+
+            // Língua feliz
+            tCtx.fillStyle = '#ff7675';
+            tCtx.beginPath();
+            tCtx.arc(cx, cy + 13, 9, 0, Math.PI, true);
+            tCtx.fill();
+        }
+
+        // ================= DESENHO DO PERSONAGEM CÉREBRO AMIGO =================
+        function drawCheeringBrain() {
+            const c = document.getElementById('canvasBrainHero');
+            const bCtx = c.getContext('2d');
+            bCtx.clearRect(0, 0, c.width, c.height);
+
+            const cx = c.width / 2;
+            const cy = c.height / 2 - 10;
+
+            // Perninhas Pretas
+            bCtx.strokeStyle = '#2d3436';
+            bCtx.lineWidth = 5;
+            bCtx.lineCap = 'round';
+
+            bCtx.beginPath();
+            bCtx.moveTo(cx - 24, cy + 45);
+            bCtx.lineTo(cx - 28, cy + 85);
+            bCtx.moveTo(cx + 24, cy + 45);
+            bCtx.lineTo(cx + 28, cy + 85);
+            bCtx.stroke();
+
+            // Sapatos Vermelhos
+            bCtx.fillStyle = '#e52521';
+            bCtx.beginPath();
+            bCtx.ellipse(cx - 32, cy + 88, 14, 8, -0.1, 0, Math.PI * 2);
+            bCtx.ellipse(cx + 32, cy + 88, 14, 8, 0.1, 0, Math.PI * 2);
+            bCtx.fill();
+
+            // Bracinhos Abertos Acolhendo
+            bCtx.strokeStyle = '#2d3436';
+            bCtx.lineWidth = 4.5;
+
+            // Braço Esquerdo levantado dando joinha/acenando
+            bCtx.beginPath();
+            bCtx.moveTo(cx - 50, cy + 15);
+            bCtx.quadraticCurveTo(cx - 75, cy - 5, cx - 80, cy - 25);
+            bCtx.stroke();
+            bCtx.fillStyle = '#ff80ab';
+            bCtx.beginPath();
+            bCtx.arc(cx - 80, cy - 25, 7, 0, Math.PI * 2);
+            bCtx.fill();
+
+            // Braço Direito aberto para abraço
+            bCtx.beginPath();
+            bCtx.moveTo(cx + 50, cy + 15);
+            bCtx.quadraticCurveTo(cx + 75, cy - 5, cx + 80, cy - 25);
+            bCtx.stroke();
+            bCtx.fillStyle = '#ff80ab';
+            bCtx.beginPath();
+            bCtx.arc(cx + 80, cy - 25, 7, 0, Math.PI * 2);
+            bCtx.fill();
+
+            // Estrutura Principal do Cérebro Rosa
+            bCtx.fillStyle = '#ffb6c1';
+            bCtx.strokeStyle = '#ff80ab';
+            bCtx.lineWidth = 4;
+
+            bCtx.beginPath();
+            bCtx.arc(cx - 36, cy + 10, 26, 0, Math.PI * 2);
+            bCtx.arc(cx - 40, cy - 20, 24, 0, Math.PI * 2);
+            bCtx.arc(cx - 18, cy - 35, 25, 0, Math.PI * 2);
+            bCtx.arc(cx + 18, cy - 35, 25, 0, Math.PI * 2);
+            bCtx.arc(cx + 40, cy - 20, 24, 0, Math.PI * 2);
+            bCtx.arc(cx + 36, cy + 10, 26, 0, Math.PI * 2);
+            bCtx.arc(cx + 16, cy + 35, 25, 0, Math.PI * 2);
+            bCtx.arc(cx - 16, cy + 35, 25, 0, Math.PI * 2);
+            bCtx.fill();
+            bCtx.stroke();
+
+            // Ranhuras anatômicas fofinhas
+            bCtx.strokeStyle = '#f06292';
+            bCtx.lineWidth = 3.5;
+            bCtx.lineCap = 'round';
+
+            bCtx.beginPath();
+            bCtx.moveTo(cx - 30, cy - 25);
+            bCtx.quadraticCurveTo(cx - 18, cy - 15, cx - 25, cy);
+            bCtx.moveTo(cx + 30, cy - 25);
+            bCtx.quadraticCurveTo(cx + 18, cy - 15, cx + 25, cy);
+            bCtx.stroke();
+
+            // Olhos Grandes Expressivos com Brilho de Orgulho
+            // Olho Esquerdo
+            bCtx.fillStyle = '#2d3436';
+            bCtx.beginPath();
+            bCtx.ellipse(cx - 16, cy + 2, 8, 11, 0, 0, Math.PI * 2);
+            bCtx.fill();
+            bCtx.fillStyle = '#ffffff';
+            bCtx.beginPath();
+            bCtx.arc(cx - 18, cy - 2, 3, 0, Math.PI * 2);
+            bCtx.arc(cx - 14, cy + 5, 1.5, 0, Math.PI * 2);
+            bCtx.fill();
+
+            // Olho Direito
+            bCtx.fillStyle = '#2d3436';
+            bCtx.beginPath();
+            bCtx.ellipse(cx + 16, cy + 2, 8, 11, 0, 0, Math.PI * 2);
+            bCtx.fill();
+            bCtx.fillStyle = '#ffffff';
+            bCtx.beginPath();
+            bCtx.arc(cx + 14, cy - 2, 3, 0, Math.PI * 2);
+            bCtx.arc(cx + 18, cy + 5, 1.5, 0, Math.PI * 2);
+            bCtx.fill();
+
+            // Bochechas Fofas
+            bCtx.fillStyle = 'rgba(255, 64, 129, 0.45)';
+            bCtx.beginPath();
+            bCtx.ellipse(cx - 28, cy + 14, 8, 5, 0, 0, Math.PI * 2);
+            bCtx.ellipse(cx + 28, cy + 14, 8, 5, 0, 0, Math.PI * 2);
+            bCtx.fill();
+
+            // Sorriso Acolhedor e Carinhoso
+            bCtx.strokeStyle = '#2d3436';
+            bCtx.lineWidth = 3.5;
+            bCtx.beginPath();
+            bCtx.arc(cx, cy + 12, 12, 0.15 * Math.PI, 0.85 * Math.PI);
+            bCtx.stroke();
+        }
+
+        // Atualiza elementos responsivos com base no tamanho da tela
+        function updateLayout() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Nós do Mapa Proporcionais
+            levelNodes = [
+                { id: 1, name: 'Tristeza', x: w * 0.35, y: h * 0.78, r: 24, color: '#4d88ff', speed: 2.0 },
+                { id: 2, name: 'Raiva', x: w * 0.62, y: h * 0.68, r: 24, color: '#ff4d4d', speed: 2.8 },
+                { id: 3, name: 'Medo', x: w * 0.45, y: h * 0.45, r: 24, color: '#a64dff', speed: 2.3 },
+                { id: 4, name: 'Ansiedade', x: w * 0.62, y: h * 0.28, r: 24, color: '#ff8c00', speed: 2.5 },
+                { id: 5, name: 'Timidez', x: w * 0.62, y: h * 0.10, r: 24, color: '#2ecc71', speed: 1.8 }
+            ];
+
+            // Plataformas Proporcionais
+            platforms = [
+                { x: 0, y: h - 60, width: w, height: 60 },                         // Chão
+                { x: w * 0.12, y: h * 0.68, width: w * 0.22, height: 20 },
+                { x: w * 0.40, y: h * 0.52, width: w * 0.22, height: 20 },
+                { x: w * 0.70, y: h * 0.34, width: w * 0.20, height: 20 }
+            ];
+
+            clipboard.x = w * 0.82;
+            clipboard.y = h * 0.24;
+        }
+
+        // Partículas de Chuva
+        const rainDrops = [];
+        for (let i = 0; i < 150; i++) {
+            rainDrops.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                length: Math.random() * 15 + 10,
+                speed: Math.random() * 8 + 8
+            });
+        }
+
+        let sunAngle = 0;
+
+        // Controles de Teclado
+        const keys = {};
+        window.addEventListener('keydown', (e) => keys[e.key] = true);
+        window.addEventListener('keyup', (e) => keys[e.key] = false);
+
+        // Suporte aos Botões na Tela (Touch & Mouse)
+        function bindTouchControl(btnId, keyName) {
+            const btn = document.getElementById(btnId);
+            const setKey = (val) => { keys[keyName] = val; };
+
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); setKey(true); });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); setKey(false); });
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); setKey(true); });
+            btn.addEventListener('mouseup', (e) => { e.preventDefault(); setKey(false); });
+            btn.addEventListener('mouseleave', (e) => { e.preventDefault(); setKey(false); });
+        }
+
+        bindTouchControl('btn-left', 'ArrowLeft');
+        bindTouchControl('btn-right', 'ArrowRight');
+        bindTouchControl('btn-jump', 'ArrowUp');
+        bindTouchControl('btn-action-x', 'x');
+
+        // Evento de Clique no Canvas para Seleção de Fase
+        canvas.addEventListener('click', (e) => {
+            if (gameState !== 'LEVEL_SELECT') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            levelNodes.forEach(node => {
+                const dx = clickX - node.x;
+                const dy = clickY - node.y;
+                if (Math.sqrt(dx * dx + dy * dy) <= node.r + 5) {
+                    startLevel(node.id);
+                }
+            });
+        });
+
+        // Hover do Mouse no Mapa
+        canvas.addEventListener('mousemove', (e) => {
+            if (gameState !== 'LEVEL_SELECT') return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let hovering = false;
+            levelNodes.forEach(node => {
+                const dx = mouseX - node.x;
+                const dy = mouseY - node.y;
+                if (Math.sqrt(dx * dx + dy * dy) <= node.r + 5) {
+                    hovering = true;
+                }
+            });
+            canvas.style.cursor = hovering ? 'pointer' : 'default';
+        });
+
+        function showLevelSelect() {
+            screenStart.classList.add('hidden');
+            screenReflection.classList.add('hidden');
+            screenReflectionAnger.classList.add('hidden');
+            screenReflectionFear.classList.add('hidden');
+            screenReflectionAnxiety.classList.add('hidden');
+            screenReflectionShyness.classList.add('hidden');
+            screenQuiz.classList.add('hidden');
+            screenVictory.classList.add('hidden');
+            screenRetry.classList.add('hidden');
+            hud.classList.add('hidden');
+            btnBackMenu.classList.add('hidden');
+            touchLeft.classList.add('hidden');
+            touchRight.classList.add('hidden');
+            gameState = 'LEVEL_SELECT';
+            canvas.style.cursor = 'default';
+        }
+
+        function startLevel(levelNum) {
+            currentLevel = levelNum;
+            hud.classList.remove('hidden');
+            btnBackMenu.classList.remove('hidden');
+            touchLeft.classList.remove('hidden');
+            touchRight.classList.remove('hidden');
+            screenReflection.classList.add('hidden');
+            screenReflectionAnger.classList.add('hidden');
+            screenReflectionFear.classList.add('hidden');
+            screenReflectionAnxiety.classList.add('hidden');
+            screenReflectionShyness.classList.add('hidden');
+            screenQuiz.classList.add('hidden');
+            screenVictory.classList.add('hidden');
+            screenRetry.classList.add('hidden');
+            gameState = 'PLAYING';
+            canvas.style.cursor = 'default';
+
+            // Reset do Nível
+            isSunny = false;
+            clipboard.collected = false;
+
+            mind.x = 60;
+            mind.y = canvas.height - 120;
+            mind.vx = 0;
+            mind.vy = 0;
+
+            const node = levelNodes.find(n => n.id === levelNum);
+            villain.x = canvas.width * 0.5;
+            villain.y = canvas.height - 140;
+            villain.vx = 0;
+            villain.vy = 0;
+            villain.color = node.color;
+            villain.speed = node.speed;
+            villain.defeated = false;
+
+            hudPhase.textContent = `FASE ${levelNum}: ${node.name.toUpperCase()}`;
+            hudStatus.textContent = "OBJETIVO: Alcance a prancheta!";
+        }
+
+        function triggerVillainDefeat() {
+            villain.defeated = true;
+            hudStatus.textContent = "ACOLHIMENTO REALIZADO! VILÃO SUPERADO!";
+
+            setTimeout(() => {
+                touchLeft.classList.add('hidden');
+                touchRight.classList.add('hidden');
+                if (currentLevel === 1) {
+                    gameState = 'REFLECTION';
+                    hud.classList.add('hidden');
+                    btnBackMenu.classList.add('hidden');
+                    screenReflection.classList.remove('hidden');
+                } else if (currentLevel === 2) {
+                    gameState = 'REFLECTION';
+                    hud.classList.add('hidden');
+                    btnBackMenu.classList.add('hidden');
+                    screenReflectionAnger.classList.remove('hidden');
+                } else if (currentLevel === 3) {
+                    gameState = 'REFLECTION';
+                    hud.classList.add('hidden');
+                    btnBackMenu.classList.add('hidden');
+                    screenReflectionFear.classList.remove('hidden');
+                } else if (currentLevel === 4) {
+                    gameState = 'REFLECTION';
+                    hud.classList.add('hidden');
+                    btnBackMenu.classList.add('hidden');
+                    screenReflectionAnxiety.classList.remove('hidden');
+                } else if (currentLevel === 5) {
+                    gameState = 'REFLECTION';
+                    hud.classList.add('hidden');
+                    btnBackMenu.classList.add('hidden');
+                    screenReflectionShyness.classList.remove('hidden');
+                } else {
+                    showLevelSelect();
+                }
+            }, 1200);
+        }
+
+        function update() {
+            if (gameState !== 'PLAYING') return;
+
+            // Movimento Horizontal
+            mind.vx = 0;
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) mind.vx = -mind.speed;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) mind.vx = mind.speed;
+
+            // Pulo
+            if ((keys['ArrowUp'] || keys['w'] || keys['W'] || keys[' ']) && mind.grounded) {
+                mind.vy = mind.jumpPower;
+                mind.grounded = false;
+            }
+
+            mind.vy += gravity;
+            mind.x += mind.vx;
+            mind.y += mind.vy;
+
+            // Colisão com Plataformas (Jogador)
+            mind.grounded = false;
+            platforms.forEach(plat => {
+                if (mind.x < plat.x + plat.width &&
+                    mind.x + mind.width > plat.x &&
+                    mind.y + mind.height >= plat.y &&
+                    mind.y + mind.height <= plat.y + plat.height + mind.vy) {
+                    
+                    mind.y = plat.y - mind.height;
+                    mind.vy = 0;
+                    mind.grounded = true;
+                }
+            });
+
+            if (mind.x < 0) mind.x = 0;
+            if (mind.x + mind.width > canvas.width) mind.x = canvas.width - mind.width;
+
+            // Comportamento do Vilão (Se não foi derrotado)
+            if (!villain.defeated) {
+                let dx = mind.x - villain.x;
+                
+                if (isSunny) {
+                    villain.vx = -Math.sign(dx) * (villain.speed * 0.7);
+                } else {
+                    villain.vx = Math.sign(dx) * villain.speed;
+                }
+
+                if (villain.grounded) {
+                    let playerIsAbove = mind.y + mind.height < villain.y - 15;
+                    let closeHorizontally = Math.abs(dx) < 220;
+                    
+                    if ((playerIsAbove && closeHorizontally) || Math.random() < 0.015) {
+                        villain.vy = villain.jumpPower;
+                        villain.grounded = false;
+                    }
+                }
+
+                villain.vy += gravity;
+                villain.x += villain.vx;
+                villain.y += villain.vy;
+
+                // Colisão do Vilão com Plataformas
+                villain.grounded = false;
+                platforms.forEach(plat => {
+                    if (villain.x < plat.x + plat.width &&
+                        villain.x + villain.width > plat.x &&
+                        villain.y + villain.height >= plat.y &&
+                        villain.y + villain.height <= plat.y + plat.height + villain.vy) {
+                        
+                        villain.y = plat.y - villain.height;
+                        villain.vy = 0;
+                        villain.grounded = true;
+                    }
+                });
+
+                if (villain.x < 0) villain.x = 0;
+                if (villain.x + villain.width > canvas.width) villain.x = canvas.width - villain.width;
+
+                // Colisão com o Vilão antes de pegar o objeto -> Reinicia a fase
+                if (!clipboard.collected) {
+                    if (mind.x < villain.x + villain.width &&
+                        mind.x + mind.width > villain.x &&
+                        mind.y < villain.y + villain.height &&
+                        mind.y + mind.height > villain.y) {
+                        
+                        startLevel(currentLevel);
+                        return;
+                    }
+                }
+            }
+
+            // Pegar Prancheta
+            if (!clipboard.collected) {
+                if (mind.x < clipboard.x + clipboard.width &&
+                    mind.x + mind.width > clipboard.x &&
+                    mind.y < clipboard.y + clipboard.height &&
+                    mind.y + mind.height > clipboard.y) {
+                    
+                    clipboard.collected = true;
+                    isSunny = true;
+                    hudStatus.textContent = "Aproxime-se e pressione [X] para ACOLHIMENTO!";
+                }
+            }
+
+            // Ação do Botão X (Acolhimento após pegar a prancheta)
+            if (clipboard.collected && !villain.defeated && (keys['x'] || keys['X'])) {
+                let distX = Math.abs((mind.x + mind.width / 2) - (villain.x + villain.width / 2));
+                let distY = Math.abs((mind.y + mind.height / 2) - (villain.y + villain.height / 2));
+
+                if (distX < 90 && distY < 90) {
+                    triggerVillainDefeat();
+                }
+            }
+
+            // Animação de Chuva
+            if (!isSunny) {
+                rainDrops.forEach(drop => {
+                    drop.y += drop.speed;
+                    drop.x -= 1.5;
+                    if (drop.y > canvas.height) {
+                        drop.y = -10;
+                        drop.x = Math.random() * canvas.width;
+                    }
+                });
+            }
+        }
+
+        // Desenhar o Mapa
+        function drawMap() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Gramado
+            ctx.fillStyle = '#38a832';
+            ctx.fillRect(0, 0, w, h);
+
+            // Rio na Esquerda
+            ctx.fillStyle = '#1e88e5';
+            ctx.beginPath();
+            ctx.moveTo(w * 0.35, 0);
+            ctx.bezierCurveTo(w * 0.2, h * 0.25, w * 0.3, h * 0.55, 0, h * 0.7);
+            ctx.lineTo(0, h);
+            ctx.lineTo(w * 0.45, h);
+            ctx.bezierCurveTo(w * 0.35, h * 0.7, w * 0.25, h * 0.25, w * 0.4, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            // Palmeiras do lado esquerdo
+            drawPalmTree(w * 0.08, h * 0.15);
+            drawPalmTree(w * 0.16, h * 0.20);
+            drawPalmTree(w * 0.07, h * 0.60);
+
+            // Palmeiras do lado direito
+            drawPalmTree(w * 0.8, h * 0.50);
+            drawPalmTree(w * 0.88, h * 0.70);
+
+            // Pirâmides no canto superior direito
+            drawPyramid(w * 0.85, h * 0.15, 50);
+            drawPyramid(w * 0.92, h * 0.22, 80);
+
+            // Caminho de Areia (em "S")
+            ctx.strokeStyle = '#e6d29d';
+            ctx.lineWidth = Math.min(w, h) * 0.08;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(levelNodes[0].x, levelNodes[0].y);
+            ctx.lineTo(levelNodes[1].x, levelNodes[1].y);
+            ctx.lineTo(levelNodes[2].x, levelNodes[2].y);
+            ctx.lineTo(levelNodes[3].x, levelNodes[3].y);
+            ctx.lineTo(levelNodes[4].x, levelNodes[4].y);
+            ctx.stroke();
+
+            // Nós das Fases
+            levelNodes.forEach(node => {
+                ctx.fillStyle = '#ff3300';
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.r + 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffea00';
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.id, node.x, node.y);
+
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 15px sans-serif';
+                ctx.fillText(`${node.id}. ${node.name}`, node.x, node.y + node.r + 18);
+            });
+        }
+
+        function drawPalmTree(x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.strokeStyle = '#8d5524';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(6, -20, 10, -40);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#aeea00';
+            ctx.lineWidth = 4;
+            const angles = [-0.8, -0.3, 0.3, 0.8, 2.2];
+            angles.forEach(a => {
+                ctx.beginPath();
+                ctx.moveTo(10, -40);
+                ctx.lineTo(10 + Math.cos(a) * 24, -40 + Math.sin(a) * 24);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+
+        function drawPyramid(x, y, size) {
+            ctx.fillStyle = '#d7ccc8';
+            ctx.strokeStyle = '#8d6e63';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x - size, y);
+            ctx.lineTo(x + size, y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x, y);
+            ctx.moveTo(x - size / 2, y - size / 2);
+            ctx.lineTo(x + size / 2, y - size / 2);
+            ctx.stroke();
+        }
+
+        // Desenhar a Skin do Player (Mind)
+        function drawBrainPlayer(x, y, w, h) {
+            ctx.save();
+            let cx = x + w / 2;
+            let topY = y;
+
+            // Pernas Palito Pretas
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3.5;
+            ctx.lineCap = 'square';
+
+            ctx.beginPath();
+            ctx.moveTo(cx - 5, topY + 24);
+            ctx.lineTo(cx - 5, topY + 36);
+            ctx.moveTo(cx + 5, topY + 24);
+            ctx.lineTo(cx + 5, topY + 36);
+            ctx.stroke();
+
+            // Sapatos Vermelhos
+            ctx.fillStyle = '#e50000';
+            ctx.beginPath();
+            ctx.ellipse(cx - 8, topY + 38, 7, 4, 0, 0, Math.PI * 2);
+            ctx.ellipse(cx + 8, topY + 38, 7, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Estrutura Principal do Cérebro Rosa
+            ctx.fillStyle = '#ffc0cb';
+            ctx.strokeStyle = '#fbaed2';
+            ctx.lineWidth = 2.5;
+
+            ctx.beginPath();
+            ctx.arc(cx - 10, topY + 14, 9, 0, Math.PI * 2);
+            ctx.arc(cx - 12, topY + 6, 8, 0, Math.PI * 2);
+            ctx.arc(cx - 5, topY + 4, 8, 0, Math.PI * 2);
+            ctx.arc(cx + 3, topY + 3, 9, 0, Math.PI * 2);
+            ctx.arc(cx + 11, topY + 6, 8, 0, Math.PI * 2);
+            ctx.arc(cx + 13, topY + 14, 9, 0, Math.PI * 2);
+            ctx.arc(cx + 4, topY + 22, 9, 0, Math.PI * 2);
+            ctx.arc(cx - 6, topY + 22, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Ranhuras internas
+            ctx.strokeStyle = '#fbaed2';
+            ctx.lineWidth = 1.8;
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(cx - 10, topY + 8);
+            ctx.lineTo(cx - 6, topY + 10);
+            ctx.lineTo(cx - 9, topY + 14);
+
+            ctx.moveTo(cx + 4, topY + 8);
+            ctx.lineTo(cx + 8, topY + 10);
+            ctx.lineTo(cx + 5, topY + 14);
+            ctx.stroke();
+
+            // Olhos
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(cx - 4, topY + 11, 2, 0, Math.PI * 2);
+            ctx.arc(cx + 4, topY + 11, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Sorriso Feliz
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.arc(cx, topY + 14, 4.5, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Skin do Vilão da Tristeza
+        function drawSadnessVillain(x, y, w, h) {
+            ctx.save();
+            let scaleX = w / 48;
+            let scaleY = h / 60;
+            ctx.translate(x, y);
+            ctx.scale(scaleX, scaleY);
+
+            let cx = 24;
+
+            // Poça de água no chão
+            ctx.fillStyle = 'rgba(10, 30, 80, 0.8)';
+            ctx.beginPath();
+            ctx.ellipse(cx, 58, 20, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#29b6f6';
+            ctx.beginPath();
+            ctx.ellipse(cx - 3, 58, 6, 1.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(cx + 8, 58, 4, 1, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Brilho Azul Externo (Aura)
+            ctx.shadowColor = '#00d2ff';
+            ctx.shadowBlur = 12;
+
+            // Corpo Fantasmagórico
+            ctx.fillStyle = '#1565c0';
+            ctx.strokeStyle = '#00d2ff';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, 4);
+            ctx.bezierCurveTo(cx + 20, 4, cx + 24, 20, cx + 22, 32);
+            ctx.bezierCurveTo(cx + 20, 42, cx + 24, 48, cx + 18, 54);
+            ctx.bezierCurveTo(cx + 12, 46, cx + 8, 52, cx, 48);
+            ctx.bezierCurveTo(cx - 8, 52, cx - 12, 46, cx - 18, 54);
+            ctx.bezierCurveTo(cx - 24, 48, cx - 20, 42, cx - 22, 32);
+            ctx.bezierCurveTo(cx - 24, 20, cx - 20, 4, cx, 4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.shadowBlur = 0;
+
+            // Ondulações no topo e laterais
+            ctx.fillStyle = '#0d47a1';
+            ctx.beginPath();
+            ctx.bezierCurveTo(cx - 18, 12, cx - 24, 22, cx - 16, 28);
+            ctx.bezierCurveTo(cx - 20, 20, cx - 14, 14, cx - 18, 12);
+            ctx.fill();
+
+            // Braços Encolhidos
+            ctx.fillStyle = '#1976d2';
+            ctx.beginPath();
+            ctx.ellipse(cx - 10, 32, 5, 3, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(cx + 10, 32, 5, 3, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Sobrancelhas Tristes
+            ctx.strokeStyle = '#0d47a1';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(cx - 14, 14);
+            ctx.quadraticCurveTo(cx - 8, 10, cx - 4, 18);
+            ctx.moveTo(cx + 14, 14);
+            ctx.quadraticCurveTo(cx + 8, 10, cx + 4, 18);
+            ctx.stroke();
+
+            // Olhos Fechados / Caídos
+            ctx.fillStyle = '#0a192f';
+            ctx.beginPath();
+            ctx.ellipse(cx - 8, 20, 4, 6, 0.2, 0, Math.PI * 2);
+            ctx.ellipse(cx + 8, 20, 4, 6, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Boca Triste Abrindo
+            ctx.beginPath();
+            ctx.moveTo(cx - 6, 30);
+            ctx.quadraticCurveTo(cx, 25, cx + 6, 30);
+            ctx.quadraticCurveTo(cx, 34, cx - 6, 30);
+            ctx.fill();
+
+            // Lágrimas
+            ctx.fillStyle = '#80d8ff';
+            ctx.beginPath();
+            ctx.moveTo(cx - 8, 24);
+            ctx.lineTo(cx - 11, 38);
+            ctx.lineTo(cx - 6, 38);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(cx + 8, 24);
+            ctx.lineTo(cx + 11, 38);
+            ctx.lineTo(cx + 6, 38);
+            ctx.closePath();
+            ctx.fill();
+
+            // Gotas caindo
+            ctx.beginPath();
+            ctx.arc(cx - 9, 44, 1.5, 0, Math.PI * 2);
+            ctx.arc(cx + 11, 46, 1.5, 0, Math.PI * 2);
+            ctx.arc(cx + 2, 52, 1, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Skin do Vilão da Raiva
+        function drawAngerVillain(x, y, w, h) {
+            ctx.save();
+            let scaleX = w / 48;
+            let scaleY = h / 60;
+            ctx.translate(x, y);
+            ctx.scale(scaleX, scaleY);
+
+            let cx = 24;
+
+            // Fumaça saindo da cabeça
+            ctx.fillStyle = 'rgba(60, 60, 60, 0.4)';
+            ctx.beginPath();
+            ctx.arc(cx - 4, 2, 5, 0, Math.PI * 2);
+            ctx.arc(cx + 2, -4, 7, 0, Math.PI * 2);
+            ctx.arc(cx - 2, -10, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Aura de fogo/calor ao redor
+            ctx.shadowColor = '#ff3300';
+            ctx.shadowBlur = 12;
+
+            // Machado de Guerra Flamejante
+            ctx.strokeStyle = '#5a2205';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.moveTo(8, 54);
+            ctx.lineTo(30, 28);
+            ctx.stroke();
+
+            // Lâmina Dupla do Machado
+            ctx.fillStyle = '#ff3300';
+            ctx.strokeStyle = '#ffcc00';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(10, 48);
+            ctx.bezierCurveTo(-2, 58, -4, 38, 16, 38);
+            ctx.lineTo(10, 48);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Lâmina menor traseira
+            ctx.beginPath();
+            ctx.moveTo(14, 44);
+            ctx.bezierCurveTo(22, 38, 18, 52, 8, 50);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Demônio de Magma
+            ctx.fillStyle = '#b30000';
+            ctx.strokeStyle = '#ff3300';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, 10);
+            ctx.bezierCurveTo(cx + 6, 8, cx + 12, 2, cx + 18, -2);
+            ctx.bezierCurveTo(cx + 14, 8, cx + 12, 14, cx + 10, 18);
+            ctx.lineTo(cx + 18, 20);
+            ctx.lineTo(cx + 12, 26);
+            ctx.lineTo(cx + 20, 28);
+            ctx.lineTo(cx + 14, 42);
+            ctx.lineTo(cx + 16, 56);
+            ctx.lineTo(cx + 8, 56);
+            ctx.lineTo(cx, 44);
+            ctx.lineTo(cx - 8, 56);
+            ctx.lineTo(cx - 16, 56);
+            ctx.lineTo(cx - 14, 42);
+            ctx.lineTo(cx - 20, 28);
+            ctx.lineTo(cx - 12, 26);
+            ctx.lineTo(cx - 18, 20);
+            ctx.lineTo(cx - 10, 18);
+            ctx.bezierCurveTo(cx - 12, 14, cx - 14, 8, cx - 18, -2);
+            ctx.bezierCurveTo(cx - 12, 2, cx - 6, 8, cx, 10);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Rachaduras de Magma
+            ctx.strokeStyle = '#ffea00';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.moveTo(cx, 16);
+            ctx.lineTo(cx, 32);
+            ctx.lineTo(cx - 6, 38);
+            ctx.moveTo(cx, 24);
+            ctx.lineTo(cx + 8, 28);
+            ctx.moveTo(cx - 10, 42);
+            ctx.lineTo(cx - 12, 50);
+            ctx.moveTo(cx + 10, 42);
+            ctx.lineTo(cx + 12, 50);
+            ctx.stroke();
+
+            // Olhos Flamejantes Amarelos
+            ctx.shadowColor = '#ffff00';
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = '#ffea00';
+            ctx.beginPath();
+            ctx.moveTo(cx - 10, 14);
+            ctx.lineTo(cx - 2, 18);
+            ctx.lineTo(cx - 8, 20);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(cx + 10, 14);
+            ctx.lineTo(cx + 2, 18);
+            ctx.lineTo(cx + 8, 20);
+            ctx.closePath();
+            ctx.fill();
+
+            // Boca com Dentes Afiados
+            ctx.fillStyle = '#ffea00';
+            ctx.beginPath();
+            ctx.moveTo(cx - 9, 23);
+            ctx.lineTo(cx + 9, 23);
+            ctx.lineTo(cx + 7, 29);
+            ctx.lineTo(cx - 7, 29);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#800000';
+            ctx.lineWidth = 1.5;
+            for (let i = -7; i <= 7; i += 3.5) {
+                ctx.beginPath();
+                ctx.moveTo(cx + i, 23);
+                ctx.lineTo(cx + i, 29);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // Skin do Vilão do Medo
+        function drawFearVillain(x, y, w, h) {
+            ctx.save();
+            let scaleX = w / 48;
+            let scaleY = h / 60;
+            ctx.translate(x, y);
+            ctx.scale(scaleX, scaleY);
+
+            let cx = 24;
+
+            ctx.shadowColor = '#8a2be2';
+            ctx.shadowBlur = 12;
+
+            ctx.fillStyle = 'rgba(75, 0, 130, 0.7)';
+            ctx.beginPath();
+            ctx.ellipse(cx, 56, 18, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#a64dff';
+            ctx.beginPath();
+            ctx.moveTo(cx - 14, 56);
+            ctx.quadraticCurveTo(cx - 12, 50, cx - 10, 56);
+            ctx.quadraticCurveTo(cx - 6, 48, cx - 2, 56);
+            ctx.quadraticCurveTo(cx + 3, 49, cx + 7, 56);
+            ctx.quadraticCurveTo(cx + 12, 50, cx + 15, 56);
+            ctx.closePath();
+            ctx.fill();
+
+            // Capa Fantasmagórica
+            ctx.fillStyle = '#2d114d';
+            ctx.strokeStyle = '#6a0dad';
+            ctx.lineWidth = 1.8;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, 2);
+            ctx.bezierCurveTo(cx + 14, 2, cx + 18, 12, cx + 16, 20);
+            ctx.lineTo(cx + 20, 32);
+            ctx.lineTo(cx + 18, 45);
+            ctx.lineTo(cx + 14, 52);
+            ctx.lineTo(cx + 10, 46);
+            ctx.lineTo(cx + 6, 52);
+            ctx.lineTo(cx, 44);
+            ctx.lineTo(cx - 6, 52);
+            ctx.lineTo(cx - 10, 46);
+            ctx.lineTo(cx - 14, 52);
+            ctx.lineTo(cx - 18, 45);
+            ctx.lineTo(cx - 20, 32);
+            ctx.lineTo(cx - 16, 20);
+            ctx.bezierCurveTo(cx - 18, 12, cx - 14, 2, cx, 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Interior Escuro
+            ctx.fillStyle = '#120524';
+            ctx.beginPath();
+            ctx.ellipse(cx, 13, 9, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Braços e Garras
+            ctx.strokeStyle = '#52228c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx - 14, 22);
+            ctx.lineTo(cx - 18, 34);
+            ctx.lineTo(cx - 12, 42);
+            ctx.moveTo(cx + 14, 22);
+            ctx.lineTo(cx + 18, 34);
+            ctx.lineTo(cx + 12, 42);
+            ctx.stroke();
+
+            // Múltiplos Olhos
+            ctx.shadowColor = '#df80ff';
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = '#e066ff';
+            ctx.beginPath();
+            ctx.arc(cx - 5, 12, 2.2, 0, Math.PI * 2);
+            ctx.arc(cx + 5, 12, 2.2, 0, Math.PI * 2);
+            ctx.arc(cx - 3, 17, 2, 0, Math.PI * 2);
+            ctx.arc(cx + 3, 17, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(cx - 5, 12, 0.9, 0, Math.PI * 2);
+            ctx.arc(cx + 5, 12, 0.9, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Skin do Vilão da Ansiedade
+        function drawAnxietyVillain(x, y, w, h) {
+            ctx.save();
+            let scaleX = w / 48;
+            let scaleY = h / 60;
+            ctx.translate(x, y);
+            ctx.scale(scaleX, scaleY);
+
+            let cx = 24;
+            let cy = 28;
+
+            ctx.fillStyle = 'rgba(8, 12, 24, 0.75)';
+            ctx.beginPath();
+            ctx.ellipse(cx, 56, 17, 4.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowColor = '#ffaa00';
+            ctx.shadowBlur = 8;
+
+            // Corpo estrelado / espinhoso
+            ctx.fillStyle = '#ffb300';
+            ctx.strokeStyle = '#c47d00';
+            ctx.lineWidth = 2;
+
+            const numSpikes = 16;
+            const outerRadius = 22;
+            const innerRadius = 13.5;
+
+            ctx.beginPath();
+            for (let i = 0; i < numSpikes; i++) {
+                let step = Math.PI / numSpikes;
+                let angleOut = (i * 2 * Math.PI / numSpikes) - Math.PI / 2;
+                let angleIn = angleOut + step;
+
+                let currentOuter = outerRadius;
+                if (i === 0) currentOuter += 5;
+
+                let xOut = cx + Math.cos(angleOut) * currentOuter;
+                let yOut = cy + Math.sin(angleOut) * currentOuter;
+                let xIn = cx + Math.cos(angleIn) * innerRadius;
+                let yIn = cy + Math.sin(angleIn) * innerRadius;
+
+                if (i === 0) ctx.moveTo(xOut, yOut);
+                else ctx.lineTo(xOut, yOut);
+                ctx.lineTo(xIn, yIn);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.shadowBlur = 0;
+
+            // Olhos Grandes Tensos
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(cx - 3, cy + 2, 5.2, 0, Math.PI * 2);
+            ctx.arc(cx + 6, cy + 3, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(cx - 3, cy + 2, 4.4, 0, Math.PI * 2);
+            ctx.arc(cx + 6, cy + 3, 3.8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(cx - 2.5, cy + 2, 1.8, 0, Math.PI * 2);
+            ctx.arc(cx + 6.5, cy + 3, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Boca Tensa
+            ctx.fillStyle = '#1a0d00';
+            ctx.fillRect(cx - 4, cy + 8, 8, 4);
+
+            ctx.restore();
+        }
+
+        // Skin do Vilão da Timidez
+        function drawShynessVillain(x, y, w, h) {
+            ctx.save();
+            let scaleX = w / 48;
+            let scaleY = h / 60;
+            ctx.translate(x, y);
+            ctx.scale(scaleX, scaleY);
+
+            let cx = 24;
+
+            ctx.fillStyle = 'rgba(8, 12, 22, 0.8)';
+            ctx.beginPath();
+            ctx.ellipse(cx + 1, 57, 16, 3.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Capa e Dobras
+            ctx.fillStyle = '#b0b7c6';
+            ctx.strokeStyle = '#2b303c';
+            ctx.lineWidth = 1.6;
+
+            ctx.beginPath();
+            ctx.moveTo(cx - 16, 36);
+            ctx.bezierCurveTo(cx - 22, 46, cx - 21, 55, cx - 18, 56);
+            ctx.lineTo(cx + 10, 56);
+            ctx.bezierCurveTo(cx + 14, 52, cx + 16, 55, cx + 18, 53);
+            ctx.lineTo(cx + 14, 34);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Capuz
+            ctx.fillStyle = '#e8ecf4';
+            ctx.beginPath();
+            ctx.moveTo(cx + 13, 31);
+            ctx.bezierCurveTo(cx + 17, 24, cx + 15, 14, cx + 8, 8);
+            ctx.bezierCurveTo(cx + 2, 3, cx - 7, 4, cx - 10, 6);
+            ctx.bezierCurveTo(cx - 15, 7, cx - 17, 10, cx - 13, 13);
+            ctx.bezierCurveTo(cx - 17, 18, cx - 17, 26, cx - 13, 32);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Abertura Escura e Rosto Corado
+            ctx.fillStyle = '#301820';
+            ctx.beginPath();
+            ctx.ellipse(cx, 21, 10, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(235, 40, 60, 0.65)';
+            ctx.beginPath();
+            ctx.ellipse(cx - 3.8, 24.5, 4.2, 3, -0.2, 0, Math.PI * 2);
+            ctx.ellipse(cx + 4.8, 24.5, 4.2, 3, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Olhos Tímidos
+            ctx.fillStyle = '#220b12';
+            ctx.beginPath();
+            ctx.ellipse(cx - 3.5, 20.5, 3.2, 4.2, -0.25, 0, Math.PI * 2);
+            ctx.ellipse(cx + 4.5, 20.5, 3.2, 4.2, 0.25, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Desenho da Prancheta
+        function drawClipboard(x, y, w, h) {
+            ctx.save();
+            ctx.fillStyle = '#8b5a2b';
+            ctx.fillRect(x, y, w, h);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(x + 3, y + 5, w - 6, h - 8);
+
+            ctx.fillStyle = '#aaaaaa';
+            ctx.fillRect(x + w / 2 - 5, y - 2, 10, 5);
+
+            // Símbolo da Psicologia (Psi: Ψ)
+            const cx = x + w / 2;
+            const cy = y + h / 2 + 2;
+
+            ctx.strokeStyle = '#8e24aa';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Haste vertical central
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 8);
+            ctx.lineTo(cx, cy + 8);
+            ctx.stroke();
+
+            // Curva (garfo/tridente)
+            ctx.beginPath();
+            ctx.moveTo(cx - 5, cy - 4);
+            ctx.quadraticCurveTo(cx - 5, cy + 3, cx, cy + 3);
+            ctx.quadraticCurveTo(cx + 5, cy + 3, cx + 5, cy - 4);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Renderização Principal do Jogo
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (gameState === 'LEVEL_SELECT' || gameState === 'MENU') {
+                drawMap();
+                return;
+            }
+
+            if (gameState === 'PLAYING') {
+                if (isSunny) {
+                    ctx.fillStyle = '#87ceeb';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    sunAngle += 0.01;
+                    ctx.fillStyle = '#ffde59';
+                    ctx.beginPath();
+                    ctx.arc(canvas.width - 80, 80, 40, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.strokeStyle = 'rgba(174, 194, 224, 0.6)';
+                    ctx.lineWidth = 1.5;
+                    rainDrops.forEach(drop => {
+                        ctx.beginPath();
+                        ctx.moveTo(drop.x, drop.y);
+                        ctx.lineTo(drop.x - 3, drop.y + drop.length);
+                        ctx.stroke();
+                    });
+                }
+
+                // Renderizar Plataformas
+                platforms.forEach(plat => {
+                    ctx.fillStyle = '#4a3b32';
+                    ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+
+                    ctx.fillStyle = isSunny ? '#2ecc71' : '#27ae60';
+                    ctx.fillRect(plat.x, plat.y, plat.width, 5);
+                });
+
+                if (!clipboard.collected) {
+                    drawClipboard(clipboard.x, clipboard.y, clipboard.width, clipboard.height);
+                }
+
+                drawBrainPlayer(mind.x, mind.y, mind.width, mind.height);
+
+                if (!villain.defeated) {
+                    if (currentLevel === 1) {
+                        drawSadnessVillain(villain.x, villain.y, villain.width, villain.height);
+                    } else if (currentLevel === 2) {
+                        drawAngerVillain(villain.x, villain.y, villain.width, villain.height);
+                    } else if (currentLevel === 3) {
+                        drawFearVillain(villain.x, villain.y, villain.width, villain.height);
+                    } else if (currentLevel === 4) {
+                        drawAnxietyVillain(villain.x, villain.y, villain.width, villain.height);
+                    } else {
+                        drawShynessVillain(villain.x, villain.y, villain.width, villain.height);
+                    }
+                }
+            }
+        }
+
+        // Loop do Jogo
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Inicialização
+        resizeCanvas();
+        gameLoop();
+    </script>
+</body>
+</html>

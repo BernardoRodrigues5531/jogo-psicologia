@@ -269,8 +269,8 @@
 
         #touch-controls-left {
             position: absolute;
-            bottom: 25px;
-            left: 25px;
+            bottom: max(25px, env(safe-area-inset-bottom, 25px));
+            left: max(25px, env(safe-area-inset-left, 25px));
             display: flex;
             gap: 15px;
             z-index: 6;
@@ -278,8 +278,8 @@
 
         #touch-controls-right {
             position: absolute;
-            bottom: 25px;
-            right: 25px;
+            bottom: max(25px, env(safe-area-inset-bottom, 25px));
+            right: max(25px, env(safe-area-inset-right, 25px));
             display: flex;
             gap: 15px;
             z-index: 6;
@@ -630,14 +630,20 @@
                 top: 8px;
                 left: 10px;
             }
-            #touch-controls-left, #touch-controls-right {
-                bottom: 10px;
-                gap: 10px;
+            #touch-controls-left {
+                bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+                left: max(16px, env(safe-area-inset-left, 16px));
+                gap: 12px;
+            }
+            #touch-controls-right {
+                bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+                right: max(16px, env(safe-area-inset-right, 16px));
+                gap: 12px;
             }
             .touch-btn {
-                width: 46px;
-                height: 46px;
-                font-size: 16px;
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
             }
             #hud {
                 top: 8px;

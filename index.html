@@ -269,7 +269,7 @@
 
         #touch-controls-left {
             position: absolute;
-            bottom: max(58px, calc(env(safe-area-inset-bottom, 0px) + 52px));
+            bottom: max(25px, env(safe-area-inset-bottom, 25px));
             left: max(25px, env(safe-area-inset-left, 25px));
             display: flex;
             gap: 15px;
@@ -278,7 +278,7 @@
 
         #touch-controls-right {
             position: absolute;
-            bottom: max(58px, calc(env(safe-area-inset-bottom, 0px) + 52px));
+            bottom: max(25px, env(safe-area-inset-bottom, 25px));
             right: max(25px, env(safe-area-inset-right, 25px));
             display: flex;
             gap: 15px;
@@ -631,12 +631,12 @@
                 left: 10px;
             }
             #touch-controls-left {
-                bottom: max(48px, calc(env(safe-area-inset-bottom, 0px) + 40px));
+                bottom: max(45px, calc(env(safe-area-inset-bottom, 0px) + 38px));
                 left: max(16px, env(safe-area-inset-left, 16px));
                 gap: 12px;
             }
             #touch-controls-right {
-                bottom: max(48px, calc(env(safe-area-inset-bottom, 0px) + 40px));
+                bottom: max(45px, calc(env(safe-area-inset-bottom, 0px) + 38px));
                 right: max(16px, env(safe-area-inset-right, 16px));
                 gap: 12px;
             }
@@ -901,7 +901,7 @@
                 <div class="psycho-content">
                     <h2>QUANDO DÁ NERVOSO 🌀</h2>
                     <p>
-                        A <b>ansiedade</b> é quando a gente fica com pressa na barriga, pensando muito no que vai acontecer amanhã.
+                        A <b>ansiedade</b> é quando a gente fica com frio na barriga, pensando muito no que vai acontecer amanhã.
                     </p>
                     <p><b>Como acalmar o corpinho:</b></p>
                     <ul>
@@ -1056,7 +1056,7 @@
             collected: false
         };
 
-        // Vilão - 48 x 60 (Pulinho baixo suave)
+        // Vilão - 48 x 60
         let villain = {
             x: 0,
             y: 0,
@@ -1065,7 +1065,7 @@
             vx: 0,
             vy: 0,
             speed: 1.4,
-            jumpPower: -4.2,
+            jumpPower: -11.5,
             grounded: false,
             color: '#4d88ff',
             defeated: false
@@ -1407,13 +1407,21 @@
         function updateLayout() {
             const w = canvas.width;
             const h = canvas.height;
+            const isLandscapeMobile = h <= 500;
+            const nodeRadius = isLandscapeMobile ? 18 : 24;
 
-            levelNodes = [
-                { id: 1, name: 'Tristeza', x: w * 0.35, y: h * 0.78, r: 24, color: '#4d88ff', speed: 1.3 },
-                { id: 2, name: 'Raiva', x: w * 0.62, y: h * 0.68, r: 24, color: '#ff4d4d', speed: 1.8 },
-                { id: 3, name: 'Medo', x: w * 0.45, y: h * 0.45, r: 24, color: '#a64dff', speed: 1.5 },
-                { id: 4, name: 'Ansiedade', x: w * 0.62, y: h * 0.28, r: 24, color: '#ff8c00', speed: 1.6 },
-                { id: 5, name: 'Timidez', x: w * 0.62, y: h * 0.10, r: 24, color: '#2ecc71', speed: 1.2 }
+            levelNodes = isLandscapeMobile ? [
+                { id: 1, name: 'Tristeza', x: w * 0.35, y: h * 0.70, r: nodeRadius, color: '#4d88ff', speed: 1.3 },
+                { id: 2, name: 'Raiva', x: w * 0.62, y: h * 0.58, r: nodeRadius, color: '#ff4d4d', speed: 1.8 },
+                { id: 3, name: 'Medo', x: w * 0.45, y: h * 0.43, r: nodeRadius, color: '#a64dff', speed: 1.5 },
+                { id: 4, name: 'Ansiedade', x: w * 0.65, y: h * 0.30, r: nodeRadius, color: '#ff8c00', speed: 1.6 },
+                { id: 5, name: 'Timidez', x: w * 0.40, y: h * 0.15, r: nodeRadius, color: '#2ecc71', speed: 1.2 }
+            ] : [
+                { id: 1, name: 'Tristeza', x: w * 0.35, y: h * 0.78, r: nodeRadius, color: '#4d88ff', speed: 1.3 },
+                { id: 2, name: 'Raiva', x: w * 0.62, y: h * 0.68, r: nodeRadius, color: '#ff4d4d', speed: 1.8 },
+                { id: 3, name: 'Medo', x: w * 0.45, y: h * 0.45, r: nodeRadius, color: '#a64dff', speed: 1.5 },
+                { id: 4, name: 'Ansiedade', x: w * 0.62, y: h * 0.28, r: nodeRadius, color: '#ff8c00', speed: 1.6 },
+                { id: 5, name: 'Timidez', x: w * 0.62, y: h * 0.10, r: nodeRadius, color: '#2ecc71', speed: 1.2 }
             ];
 
             platforms = [
@@ -1542,7 +1550,6 @@
             villain.vy = 0;
             villain.color = node.color;
             villain.speed = node.speed;
-            villain.jumpPower = -4.2;
             villain.defeated = false;
 
             hudPhase.textContent = `FASE ${levelNum}: ${node.name.toUpperCase()}`;
@@ -1619,7 +1626,6 @@
             if (mind.x < 0) mind.x = 0;
             if (mind.x + mind.width > canvas.width) mind.x = canvas.width - mind.width;
 
-            // Comportamento do Vilão (Pulinho baixo suave no chão, sem escalar plataformas)
             if (!villain.defeated) {
                 let dx = mind.x - villain.x;
                 
@@ -1630,7 +1636,10 @@
                 }
 
                 if (villain.grounded) {
-                    if (Math.random() < 0.012) {
+                    let playerIsAbove = mind.y + mind.height < villain.y - 15;
+                    let closeHorizontally = Math.abs(dx) < 220;
+                    
+                    if ((playerIsAbove && closeHorizontally) || Math.random() < 0.012) {
                         villain.vy = villain.jumpPower;
                         villain.grounded = false;
                     }
@@ -1640,19 +1649,18 @@
                 villain.x += villain.vx;
                 villain.y += villain.vy;
 
-                // Vilão colide apenas com o chão (platforms[0]), ignorando plataformas superiores
                 villain.grounded = false;
-                const groundPlat = platforms[0];
-                if (groundPlat &&
-                    villain.x < groundPlat.x + groundPlat.width &&
-                    villain.x + villain.width > groundPlat.x &&
-                    villain.y + villain.height >= groundPlat.y &&
-                    villain.y + villain.height <= groundPlat.y + groundPlat.height + villain.vy) {
-                    
-                    villain.y = groundPlat.y - villain.height;
-                    villain.vy = 0;
-                    villain.grounded = true;
-                }
+                platforms.forEach(plat => {
+                    if (villain.x < plat.x + plat.width &&
+                        villain.x + villain.width > plat.x &&
+                        villain.y + villain.height >= plat.y &&
+                        villain.y + villain.height <= plat.y + plat.height + villain.vy) {
+                        
+                        villain.y = plat.y - villain.height;
+                        villain.vy = 0;
+                        villain.grounded = true;
+                    }
+                });
 
                 if (villain.x < 0) villain.x = 0;
                 if (villain.x + villain.width > canvas.width) villain.x = canvas.width - villain.width;
@@ -1705,6 +1713,7 @@
         function drawMap() {
             const w = canvas.width;
             const h = canvas.height;
+            const isLandscapeMobile = h <= 500;
 
             ctx.fillStyle = '#38a832';
             ctx.fillRect(0, 0, w, h);
@@ -1753,14 +1762,14 @@
                 ctx.fill();
 
                 ctx.fillStyle = '#000';
-                ctx.font = 'bold 18px sans-serif';
+                ctx.font = isLandscapeMobile ? 'bold 15px sans-serif' : 'bold 18px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(node.id, node.x, node.y);
 
                 ctx.fillStyle = '#000';
-                ctx.font = 'bold 15px sans-serif';
-                ctx.fillText(`${node.id}. ${node.name}`, node.x, node.y + node.r + 18);
+                ctx.font = isLandscapeMobile ? 'bold 12px sans-serif' : 'bold 15px sans-serif';
+                ctx.fillText(`${node.id}. ${node.name}`, node.x, node.y + node.r + (isLandscapeMobile ? 12 : 18));
             });
         }
 
